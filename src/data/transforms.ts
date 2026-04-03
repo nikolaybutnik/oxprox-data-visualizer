@@ -2,31 +2,41 @@
 // Data Transforms — Shape raw dataset into per-chart Nivo-compatible formats
 // =============================================================================
 
-import type { Investor, Resolution, VoteRecord, VoteValue } from './types'
+import type { EsgCategory, Investor, Resolution, VoteRecord, VoteValue } from './types'
 
 // -----------------------------------------------------------------------------
 // Stacked Bar Chart
 // One bar group per resolution, stacked by vote count (For / Against / Abstain)
+// Nivo requires BarDatum to satisfy Record<string, string | number>, so voter
+// name lists are returned separately and keyed by resolutionId.
 // -----------------------------------------------------------------------------
-export interface BarDatum {
+export interface BarDatum extends Record<string, string | number> {
   resolution: string
   resolutionId: string
   For: number
   Against: number
   Abstain: number
-  ForVoters: string[]
-  AgainstVoters: string[]
-  AbstainVoters: string[]
+}
+
+export interface BarVotersMap {
+  [resolutionId: string]: Record<VoteValue, string[]>
+}
+
+export interface BarData {
+  data: BarDatum[]
+  votersMap: BarVotersMap
 }
 
 export function toBarData(
   votes: VoteRecord[],
   resolutions: Resolution[],
   investors: Investor[]
-): BarDatum[] {
-  if (!resolutions.length || !investors.length) return []
+): BarData {
+  if (!resolutions.length || !investors.length) return { data: [], votersMap: {} }
 
-  return resolutions.map((resolution) => {
+  const votersMap: BarVotersMap = {}
+
+  const data = resolutions.map((resolution) => {
     const resolutionVotes = votes.filter((v) => v.resolutionId === resolution.id)
 
     const grouped: Record<VoteValue, string[]> = {
@@ -41,17 +51,18 @@ export function toBarData(
       grouped[vote].push(investor.label)
     })
 
+    votersMap[resolution.id] = grouped
+
     return {
       resolution: resolution.shortLabel,
       resolutionId: resolution.id,
       For: grouped.For.length,
       Against: grouped.Against.length,
       Abstain: grouped.Abstain.length,
-      ForVoters: grouped.For,
-      AgainstVoters: grouped.Against,
-      AbstainVoters: grouped.Abstain,
     }
   })
+
+  return { data, votersMap }
 }
 
 // -----------------------------------------------------------------------------
@@ -191,4 +202,12 @@ export function toChordData(
   })
 
   return { matrix, keys }
+}
+
+// -----------------------------------------------------------------------------
+// ESG Map
+// Lookup map from resolution shortLabel to ESG category, used by chart layers
+// -----------------------------------------------------------------------------
+export function toEsgMap(resolutions: Resolution[]): Record<string, EsgCategory> {
+  return Object.fromEntries(resolutions.map((r) => [r.shortLabel, r.esgCategory]))
 }

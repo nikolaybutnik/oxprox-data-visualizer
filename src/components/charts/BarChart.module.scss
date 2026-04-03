@@ -1,0 +1,88 @@
+@use '../../styles/tokens' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  @include bp-md {
+    max-width: 800px;
+  }
+}
+
+.title {
+  font-family: $font-heading;
+  font-size: $font-size-xl;
+  color: $color-navy;
+}
+
+.chart {
+  position: relative;
+  height: 380px;
+  width: 100%;
+
+  @include bp-md {
+    height: 460px;
+  }
+}
+
+.esgTooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 8px));
+  background: $color-white;
+  border-radius: $border-radius-md;
+  padding: $space-2 $space-3;
+  box-shadow: 0 4px 12px rgba(14, 32, 67, 0.12);
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-navy;
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.esgDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltip {
+  background: $color-white;
+  border-radius: $border-radius-md;
+  padding: $space-3 $space-4;
+  box-shadow: 0 4px 12px rgba(14, 32, 67, 0.12);
+  min-width: 160px;
+}
+
+.tooltipVote {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: $space-1;
+}
+
+.tooltipCount {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-stone;
+  margin-bottom: $space-2;
+}
+
+.tooltipVoters {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  li {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $color-navy;
+  }
+}

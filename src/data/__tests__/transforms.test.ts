@@ -34,30 +34,31 @@ const votes: VoteRecord[] = [
 // =============================================================================
 describe('toBarData', () => {
   it('returns one entry per resolution with correct vote counts', () => {
-    const result = toBarData(votes, resolutions, investors)
-    expect(result).toHaveLength(2)
-    expect(result[0].resolution).toBe('Board Diversity')
-    expect(result[0].For).toBe(1)
-    expect(result[0].Against).toBe(1)
-    expect(result[0].Abstain).toBe(0)
+    const { data } = toBarData(votes, resolutions, investors)
+    expect(data).toHaveLength(2)
+    expect(data[0].resolution).toBe('Board Diversity')
+    expect(data[0].For).toBe(1)
+    expect(data[0].Against).toBe(1)
+    expect(data[0].Abstain).toBe(0)
   })
 
-  it('populates voter name lists for tooltip use', () => {
-    const result = toBarData(votes, resolutions, investors)
-    expect(result[0].ForVoters).toContain('Investor A')
-    expect(result[0].AgainstVoters).toContain('Investor B')
+  it('populates votersMap for tooltip use', () => {
+    const { votersMap } = toBarData(votes, resolutions, investors)
+    expect(votersMap['res-1'].For).toContain('Investor A')
+    expect(votersMap['res-1'].Against).toContain('Investor B')
   })
 
-  it('returns empty array when resolutions list is empty', () => {
-    const result = toBarData(votes, [], investors)
-    expect(result).toEqual([])
+  it('returns empty data and votersMap when resolutions list is empty', () => {
+    const { data, votersMap } = toBarData(votes, [], investors)
+    expect(data).toEqual([])
+    expect(votersMap).toEqual({})
   })
 
   it('defaults missing votes to Abstain', () => {
-    const result = toBarData([], resolutions, investors)
-    expect(result[0].Abstain).toBe(2)
-    expect(result[0].For).toBe(0)
-    expect(result[0].Against).toBe(0)
+    const { data } = toBarData([], resolutions, investors)
+    expect(data[0].Abstain).toBe(2)
+    expect(data[0].For).toBe(0)
+    expect(data[0].Against).toBe(0)
   })
 })
 
