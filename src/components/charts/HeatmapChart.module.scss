@@ -43,7 +43,7 @@
 
 .legend {
   @include bp-md {
-    padding-bottom: $space-20;
+    padding-bottom: $space-5;
   }
 }
 
@@ -80,30 +80,25 @@
   min-width: 160px;
 }
 
-.tooltipVote {
+.tooltipResolution {
   font-family: $font-body;
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
+  color: $color-stone;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: $space-1;
 }
 
-.tooltipCount {
+.tooltipInvestor {
   font-family: $font-body;
   font-size: $font-size-sm;
-  color: $color-stone;
+  color: $color-navy;
   margin-bottom: $space-2;
 }
 
-.tooltipVoters {
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-
-  li {
-    font-family: $font-body;
-    font-size: $font-size-sm;
-    color: $color-navy;
-  }
+.tooltipVote {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
 }

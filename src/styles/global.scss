@@ -7,6 +7,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
+html {
+  background-color: $color-navy;
+  overflow-x: hidden;
+}
+
 body {
   font-family: $font-body;
   font-size: $font-size-base;
@@ -14,9 +19,15 @@ body {
   line-height: $line-height-base;
   color: $color-navy;
   background-color: $color-offwhite;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: $font-heading;
   line-height: $line-height-tight;
   color: $color-navy;

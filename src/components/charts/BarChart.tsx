@@ -1,11 +1,16 @@
-import { useRef, useState, useCallback, useMemo } from 'react'
-import { ResponsiveBar, type BarTooltipProps, type BarCustomLayerProps } from '@nivo/bar'
+import { useRef, useState, useCallback, useMemo, memo } from 'react'
+import {
+  ResponsiveBar,
+  type BarTooltipProps,
+  type BarCustomLayerProps,
+} from '@nivo/bar'
 import { nivoTheme } from '../../styles/nivoTheme'
 import { voteColors, esgColors, esgLabels } from '../../styles/colors'
 import type { BarDatum, BarVotersMap } from '../../data/transforms'
 import type { EsgCategory, VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import { getBarChartMargin, getBarChartLegends } from './BarChart.config'
+import { getBarChartMargin, getBarAxisBottom, BAR_AXIS_LEFT } from './BarChart.config'
+import VoteLegend from '../ui/VoteLegend'
 import styles from './BarChart.module.scss'
 
 interface BarChartProps {
@@ -22,7 +27,6 @@ interface EsgTooltipState {
   x: number
   y: number
   category: EsgCategory
-  resolution: string
 }
 
 function BarTooltip({ id, value, data, votersMap }: TooltipProps) {
@@ -52,6 +56,8 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
   const isMobile = useIsMobile()
   const chartRef = useRef<HTMLDivElement>(null)
   const [esgTooltip, setEsgTooltip] = useState<EsgTooltipState | null>(null)
+
+  const hideEsgTooltip = useCallback(() => setEsgTooltip(null), [])
 
   const EsgLayer = useCallback(
     ({ bars }: BarCustomLayerProps<BarDatum>) => {
@@ -83,10 +89,9 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
                       x: circleRect.left - rect.left + circleRect.width / 2,
                       y: circleRect.top - rect.top,
                       category,
-                      resolution,
                     })
                   }}
-                  onMouseLeave={() => setEsgTooltip(null)}
+                  onMouseLeave={hideEsgTooltip}
                 />
                 <text
                   textAnchor='middle'
@@ -105,66 +110,61 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
         </>
       )
     },
-    [esgMap]
+    [esgMap, hideEsgTooltip],
+  )
+
+  const renderTooltip = useCallback(
+    (props: BarTooltipProps<BarDatum>) => <BarTooltip {...props} votersMap={votersMap} />,
+    [votersMap],
   )
 
   const layers = useMemo(
     () => ['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', EsgLayer] as const,
-    [EsgLayer]
+    [EsgLayer],
   )
 
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.title}>Investor Votes by Resolution</h2>
-      <div className={styles.chart} ref={chartRef}>
-        <ResponsiveBar
-          data={data}
-          keys={['For', 'Against', 'Abstain']}
-          indexBy='resolution'
-          groupMode='stacked'
-          layout='vertical'
-          colors={({ id }) => voteColors[id as string]}
-          theme={nivoTheme}
-          margin={getBarChartMargin(isMobile)}
-          padding={0.35}
-          axisBottom={{
-            tickSize: 0,
-            tickPadding: 12,
-            tickRotation: -35,
-            legend: 'Resolution',
-            legendPosition: 'middle',
-            legendOffset: isMobile ? 88 : 80,
-          }}
-          axisLeft={{
-            tickSize: 0,
-            tickPadding: 8,
-            tickValues: 5,
-            legend: 'Number of Investors',
-            legendPosition: 'middle',
-            legendOffset: -36,
-          }}
-          animate={false}
-          enableLabel={false}
-          tooltip={(props) => <BarTooltip {...props} votersMap={votersMap} />}
-          legends={getBarChartLegends(isMobile)}
-          layers={layers}
-        />
+      <div className={styles.body}>
+        <div className={styles.chart} ref={chartRef}>
+          <ResponsiveBar
+            data={data}
+            keys={['For', 'Against', 'Abstain']}
+            indexBy='resolution'
+            groupMode='stacked'
+            layout='vertical'
+            colors={({ id }) => voteColors[id as string]}
+            theme={nivoTheme}
+            margin={getBarChartMargin(isMobile)}
+            padding={0.35}
+            axisBottom={getBarAxisBottom(isMobile)}
+            axisLeft={BAR_AXIS_LEFT}
+            animate={false}
+            enableLabel={false}
+            tooltip={renderTooltip}
+            layers={layers}
+          />
 
-        {esgTooltip && (
-          <div
-            className={styles.esgTooltip}
-            style={{ left: esgTooltip.x, top: esgTooltip.y }}
-          >
-            <span
-              className={styles.esgDot}
-              style={{ background: esgColors[esgTooltip.category] }}
-            />
-            {esgLabels[esgTooltip.category]}
-          </div>
-        )}
+          {esgTooltip && (
+            <div
+              className={styles.esgTooltip}
+              style={{ left: esgTooltip.x, top: esgTooltip.y }}
+            >
+              <span
+                className={styles.esgDot}
+                style={{ background: esgColors[esgTooltip.category] }}
+              />
+              {esgLabels[esgTooltip.category]}
+            </div>
+          )}
+        </div>
+        <div className={styles.legend}>
+          <VoteLegend direction={isMobile ? 'row' : 'column'} />
+        </div>
       </div>
     </div>
   )
 }
 
-export default BarChart
+export default memo(BarChart)
