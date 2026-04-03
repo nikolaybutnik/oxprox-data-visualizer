@@ -1,0 +1,23 @@
+// =============================================================================
+// Global Styles
+// =============================================================================
+
+@use 'tokens' as *;
+@use 'reset';
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: $font-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $color-navy;
+  background-color: $color-offwhite;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  line-height: $line-height-tight;
+  color: $color-navy;
+}
