@@ -1,0 +1,21 @@
+@use './styles/tokens' as *;
+
+.layout {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding: $space-8 $space-6;
+
+  @include bp-md {
+    padding: $space-12 $space-8;
+  }
+}
+
+.container {
+  max-width: $max-width;
+  margin: 0 auto;
+}
