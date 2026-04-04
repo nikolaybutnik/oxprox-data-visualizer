@@ -145,7 +145,14 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Investor Votes by Resolution</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Investor Votes by Resolution</h2>
+        <p className={styles.description}>
+          Stacked bars make contested resolutions immediately visible — a split bar signals disagreement,
+          a uniform bar signals consensus. Portfolio managers can identify which proposals drew pushback
+          and prioritise engagement accordingly.
+        </p>
+      </div>
       <div className={styles.body}>
         <div className={styles.chart} ref={chartRef}>
           <ResponsiveBar

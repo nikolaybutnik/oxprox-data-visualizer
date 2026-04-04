@@ -20,6 +20,20 @@
   }
 }
 
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.description {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-stone;
+  line-height: $line-height-base;
+  max-width: 540px;
+}
+
 .body {
   display: grid;
   grid-template-columns: 1fr;

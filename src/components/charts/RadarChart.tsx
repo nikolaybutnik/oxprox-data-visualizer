@@ -103,7 +103,14 @@ function RadarChart({ data, keys }: RadarChartProps) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Voting Profile by Investor</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Voting Profile by Investor</h2>
+        <p className={styles.description}>
+          Each investor's polygon encodes their overall voting personality. A large, regular shape
+          signals consistent ESG alignment; a compact or irregular shape reveals a more selective
+          approach. Designed for peer comparison and manager profiling.
+        </p>
+      </div>
       <div className={styles.body}>
         <div className={styles.chart}>
           <ResponsiveRadar

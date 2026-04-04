@@ -83,6 +83,12 @@ function ChordChart({ variants }: ChordChartProps) {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <h2 className={styles.title}>Investor Agreement</h2>
+        <p className={styles.description}>
+          Ribbons connect investors who voted identically, making alignment groups visible at a glance.
+          Ribbon thickness reflects the strength of agreement. Use the E / S / G filter to reveal
+          whether investors align on environmental topics but diverge on governance — a pattern
+          invisible in any tabular view.
+        </p>
         <div className={styles.tabs} role='tablist'>
           {TABS.map((tab) => (
             <button

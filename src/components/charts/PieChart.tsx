@@ -49,7 +49,14 @@ function PieChart({ data }: PieChartProps) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Overall Vote Distribution</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Overall Vote Distribution</h2>
+        <p className={styles.description}>
+          A high-level snapshot of the aggregate vote balance across all proposals. Useful for
+          governance reporting and strategy reviews — a portfolio heavily skewed toward Against may
+          indicate a systematic divergence worth raising with asset managers.
+        </p>
+      </div>
       <div className={styles.body}>
         <div className={styles.chart}>
           <ResponsivePie

@@ -201,7 +201,14 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Investor Voting Heatmap</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Investor Voting Heatmap</h2>
+        <p className={styles.description}>
+          Every investor's exact position on every resolution, in a single view. Cell colour makes it
+          effortless to spot alignment clusters and outliers without requiring any interaction — built
+          for rapid pattern recognition across the portfolio.
+        </p>
+      </div>
       <div className={styles.body}>
         <div className={styles.chart} ref={chartRef}>
           <ResponsiveHeatMap
