@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import type { CSSProperties } from 'react'
 import {
   ResponsiveChord,
@@ -10,7 +10,6 @@ import { investorColors, esgColors, colors } from '../../styles/colors'
 import type { ChordData } from '../../data/transforms'
 import type { EsgCategory } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import Legend from '../ui/Legend'
 import { getChordChartMargin } from './ChordChart.config'
 import styles from './ChordChart.module.scss'
 
@@ -52,18 +51,51 @@ function ArcTooltip({ arc }: ArcTooltipComponentProps) {
 function ChordChart({ variants }: ChordChartProps) {
   const isMobile = useIsMobile()
   const [filter, setFilter] = useState<EsgFilter>('all')
+  const [disabled, setDisabled] = useState<Set<string>>(new Set())
 
   const { data, resolutionCount } = variants[filter]
   const { matrix, keys } = data
+  const investorSignature = keys.join('\0')
 
-  const investorItems = keys.map((label, i) => ({
-    label,
-    color: investorColors[i] ?? investorColors[0],
-  }))
+  // Reset investor selection when ESG tab changes or dataset switches
+  useEffect(() => {
+    setDisabled(new Set())
+  }, [filter, investorSignature])
+
+  // Derive filtered matrix and keys, preserving original indices for colour lookup
+  const { activeKeys, activeMatrix } = useMemo(() => {
+    const idx = keys
+      .map((k, i) => ({ k, i }))
+      .filter(({ k }) => !disabled.has(k))
+    return {
+      activeKeys: idx.map(({ k }) => k),
+      activeMatrix: idx.map(({ i: r }) => idx.map(({ i: c }) => matrix[r][c])),
+    }
+  }, [keys, matrix, disabled])
+
+  const allEnabled = disabled.size === 0
+  const hasAgreements = activeMatrix.some((row) => row.some((v) => v > 0))
+
+  const toggleInvestor = useCallback(
+    (key: string) => {
+      setDisabled((prev) => {
+        if (!prev.has(key) && keys.filter((k) => !prev.has(k)).length <= 2)
+          return prev
+        const next = new Set(prev)
+        next.has(key) ? next.delete(key) : next.add(key)
+        return next
+      })
+    },
+    [keys],
+  )
+
+  const selectAll = useCallback(() => setDisabled(new Set()), [])
 
   const ribbonTooltip = useCallback(
     ({ ribbon }: RibbonTooltipComponentProps) => {
-      const count = matrix[ribbon.source.index][ribbon.target.index]
+      // source/target indices are positions in the filtered activeMatrix
+      const count =
+        activeMatrix[ribbon.source.index]?.[ribbon.target.index] ?? 0
       return (
         <div className={styles.tooltip}>
           <p className={styles.tooltipPair}>
@@ -76,7 +108,7 @@ function ChordChart({ variants }: ChordChartProps) {
         </div>
       )
     },
-    [matrix, resolutionCount],
+    [activeMatrix, resolutionCount],
   )
 
   return (
@@ -108,35 +140,68 @@ function ChordChart({ variants }: ChordChartProps) {
             </button>
           ))}
         </div>
+        <div className={styles.filters}>
+          <button
+            className={styles.filterBtn}
+            data-active={allEnabled}
+            style={{ '--filter-color': colors.navy } as CSSProperties}
+            onClick={selectAll}
+          >
+            All
+          </button>
+          {keys.map((key, i) => (
+            <button
+              key={key}
+              className={styles.filterBtn}
+              data-active={!disabled.has(key)}
+              style={
+                {
+                  '--filter-color': investorColors[i] ?? investorColors[0],
+                } as CSSProperties
+              }
+              onClick={() => toggleInvestor(key)}
+            >
+              {key}
+            </button>
+          ))}
+        </div>
       </div>
       <div className={styles.body}>
         <div className={styles.chart}>
-          <ResponsiveChord
-            key={filter}
-            data={matrix}
-            keys={keys}
-            colors={({ index }) => investorColors[index] ?? investorColors[0]}
-            margin={getChordChartMargin(isMobile)}
-            padAngle={0.02}
-            innerRadiusRatio={0.82}
-            innerRadiusOffset={0.02}
-            arcOpacity={0.9}
-            activeArcOpacity={1}
-            inactiveArcOpacity={0.4}
-            arcBorderWidth={1}
-            arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-            ribbonOpacity={0.5}
-            activeRibbonOpacity={0.75}
-            inactiveRibbonOpacity={0.1}
-            enableLabel={true}
-            label={(arc) => (arc.value > 0 ? arc.id : '')}
-            labelOffset={12}
-            labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
-            theme={nivoTheme}
-            animate={false}
-            arcTooltip={ArcTooltip}
-            ribbonTooltip={ribbonTooltip}
-          />
+          {!hasAgreements ? (
+            <div className={styles.empty}>
+              No shared votes for these filters
+            </div>
+          ) : (
+            <ResponsiveChord
+              key={`${filter}-${activeKeys.join(',')}`}
+              data={activeMatrix}
+              keys={activeKeys}
+              colors={({ id }) =>
+                investorColors[keys.indexOf(id as string)] ?? investorColors[0]
+              }
+              margin={getChordChartMargin(isMobile)}
+              padAngle={0.02}
+              innerRadiusRatio={0.82}
+              innerRadiusOffset={0.02}
+              arcOpacity={0.9}
+              activeArcOpacity={1}
+              inactiveArcOpacity={0.4}
+              arcBorderWidth={1}
+              arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
+              ribbonOpacity={0.5}
+              activeRibbonOpacity={0.75}
+              inactiveRibbonOpacity={0.1}
+              enableLabel={true}
+              label={(arc) => (arc.value > 0 ? arc.id : '')}
+              labelOffset={12}
+              labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
+              theme={nivoTheme}
+              animate={false}
+              arcTooltip={ArcTooltip}
+              ribbonTooltip={ribbonTooltip}
+            />
+          )}
         </div>
         <div className={styles.legend}>
           <ul className={styles.resolutions}>
@@ -146,10 +211,6 @@ function ChordChart({ variants }: ChordChartProps) {
               </li>
             ))}
           </ul>
-          <Legend
-            items={investorItems}
-            direction={isMobile ? 'row' : 'column'}
-          />
         </div>
       </div>
     </div>

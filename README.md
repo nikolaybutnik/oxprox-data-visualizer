@@ -46,7 +46,7 @@ The spec asked for a single chart with tooltips and responsive layout. Rather th
 | Profiles | Radar | What is each investor's overall voting personality? Consistent For? Mixed? Against-leaning? |
 | Agreements | Chord | Which investors tend to vote the same way as each other, and on which ESG category? |
 
-The chord diagram includes an **E / S / G / All** filter so agreement patterns can be compared by ESG category. The radar chart includes per-investor toggle pills — defaulting to All, each pill shows or hides that investor's polygon independently. Both controls label their colour directly in the pill so no separate legend is needed.
+Both the chord and radar charts include per-investor toggle pills (defaulting to All) that show or hide individual investors. The chord diagram also has an **E / S / G / All** ESG filter; switching category resets the investor selection for a clean view of each topic. When the selected combination produces no shared votes, a "No shared votes for these filters" placeholder replaces the chart. Both controls use the investor's colour directly in the pill, eliminating the need for a separate legend.
 
 ### Dataset switcher
 

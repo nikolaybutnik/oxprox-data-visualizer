@@ -115,7 +115,7 @@ function RadarChart({ data, keys }: RadarChartProps) {
     (key: string) => {
       setDisabled((prev) => {
         // Prevent deselecting the last visible investor
-        if (!prev.has(key) && keys.filter((k) => !prev.has(k)).length === 1)
+        if (!prev.has(key) && keys.filter((k) => !prev.has(k)).length <= 2)
           return prev
         const next = new Set(prev)
         next.has(key) ? next.delete(key) : next.add(key)
@@ -171,6 +171,7 @@ function RadarChart({ data, keys }: RadarChartProps) {
       <div className={styles.body}>
         <div className={styles.chart}>
           <ResponsiveRadar
+            key={activeKeys.join(',')}
             data={data}
             keys={activeKeys}
             indexBy='resolution'
