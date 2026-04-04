@@ -10,6 +10,13 @@ import type {
   VoteValue,
 } from './types'
 
+/** O(1) vote lookup keyed by "resolutionId:investorId" */
+function buildVoteLookup(votes: VoteRecord[]): Map<string, VoteValue> {
+  return new Map(
+    votes.map((v) => [`${v.resolutionId}:${v.investorId}`, v.vote]),
+  )
+}
+
 // -----------------------------------------------------------------------------
 // Stacked Bar Chart
 // One bar group per resolution, stacked by vote count (For / Against / Abstain)
@@ -41,33 +48,29 @@ export function toBarData(
   if (!resolutions.length || !investors.length)
     return { data: [], votersMap: {} }
 
+  const lookup = buildVoteLookup(votes)
   const votersMap: BarVotersMap = {}
 
   const data = resolutions.map((resolution) => {
-    const resolutionVotes = votes.filter(
-      (v) => v.resolutionId === resolution.id,
-    )
-
-    const grouped: Record<VoteValue, string[]> = {
+    const voteGroups: Record<VoteValue, string[]> = {
       For: [],
       Against: [],
       Abstain: [],
     }
 
     investors.forEach((investor) => {
-      const record = resolutionVotes.find((v) => v.investorId === investor.id)
-      const vote: VoteValue = record?.vote ?? 'Abstain'
-      grouped[vote].push(investor.label)
+      const vote = lookup.get(`${resolution.id}:${investor.id}`) ?? 'Abstain'
+      voteGroups[vote].push(investor.label)
     })
 
-    votersMap[resolution.id] = grouped
+    votersMap[resolution.id] = voteGroups
 
     return {
       resolution: resolution.shortLabel,
       resolutionId: resolution.id,
-      For: grouped.For.length,
-      Against: grouped.Against.length,
-      Abstain: grouped.Abstain.length,
+      For: voteGroups.For.length,
+      Against: voteGroups.Against.length,
+      Abstain: voteGroups.Abstain.length,
     }
   })
 
@@ -78,7 +81,7 @@ export function toBarData(
 // Heatmap
 // Rows = resolutions, columns = investors, cell value = vote as numeric
 // -----------------------------------------------------------------------------
-const VOTE_TO_VALUE: Record<VoteValue, number> = {
+const VOTE_TO_NUMERIC: Record<VoteValue, number> = {
   For: 1,
   Against: -1,
   Abstain: 0,
@@ -102,18 +105,13 @@ export function toHeatmapData(
 ): HeatmapDatum[] {
   if (!resolutions.length || !investors.length) return []
 
+  const lookup = buildVoteLookup(votes)
+
   return resolutions.map((resolution) => ({
     id: resolution.shortLabel,
     data: investors.map((investor) => {
-      const record = votes.find(
-        (v) => v.resolutionId === resolution.id && v.investorId === investor.id,
-      )
-      const vote: VoteValue = record?.vote ?? 'Abstain'
-      return {
-        x: investor.label,
-        y: VOTE_TO_VALUE[vote],
-        vote,
-      }
+      const vote = lookup.get(`${resolution.id}:${investor.id}`) ?? 'Abstain'
+      return { x: investor.label, y: VOTE_TO_NUMERIC[vote], vote }
     }),
   }))
 }
@@ -146,7 +144,7 @@ export function toPieData(votes: VoteRecord[]): PieDatum[] {
 // One shape per investor, each axis = a resolution
 // Values: 0 (Against), 0.5 (Abstain), 1 (For)
 // -----------------------------------------------------------------------------
-const VOTE_TO_RADAR: Record<VoteValue, number> = {
+const VOTE_TO_RADAR_SCORE: Record<VoteValue, number> = {
   For: 3,
   Abstain: 2,
   Against: 1,
@@ -164,13 +162,15 @@ export function toRadarData(
 ): RadarDatum[] {
   if (!resolutions.length || !investors.length) return []
 
+  const lookup = buildVoteLookup(votes)
+
   return resolutions.map((resolution) => {
     const datum: RadarDatum = { resolution: resolution.shortLabel }
     investors.forEach((investor) => {
-      const record = votes.find(
-        (v) => v.resolutionId === resolution.id && v.investorId === investor.id,
-      )
-      datum[investor.label] = VOTE_TO_RADAR[record?.vote ?? 'Abstain']
+      datum[investor.label] =
+        VOTE_TO_RADAR_SCORE[
+          lookup.get(`${resolution.id}:${investor.id}`) ?? 'Abstain'
+        ]
     })
     return datum
   })
@@ -191,27 +191,32 @@ export function toChordData(
   investors: Investor[],
 ): ChordData {
   const keys = investors.map((i) => i.label)
-  const n = investors.length
+  const investorCount = investors.length
 
-  if (!n || !resolutions.length) return { matrix: [], keys }
+  if (!investorCount || !resolutions.length) return { matrix: [], keys }
 
-  const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0))
+  const matrix: number[][] = Array.from({ length: investorCount }, () =>
+    Array(investorCount).fill(0),
+  )
 
   resolutions.forEach((resolution) => {
-    const resolutionVotes = votes.filter(
-      (v) => v.resolutionId === resolution.id,
+    const voteByInvestor: Map<string, VoteValue> = new Map(
+      votes
+        .filter((v) => v.resolutionId === resolution.id)
+        .map((v) => [v.investorId, v.vote]),
     )
 
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue
-        const voteI = resolutionVotes.find(
-          (v) => v.investorId === investors[i].id,
-        )?.vote
-        const voteJ = resolutionVotes.find(
-          (v) => v.investorId === investors[j].id,
-        )?.vote
-        if (voteI && voteJ && voteI === voteJ) matrix[i][j]++
+    for (let i = 0; i < investorCount; i++) {
+      const voteI = voteByInvestor.get(investors[i].id)
+      if (!voteI) continue
+
+      for (let j = i + 1; j < investorCount; j++) {
+        const voteJ = voteByInvestor.get(investors[j].id)
+
+        if (voteJ === voteI) {
+          matrix[i][j]++
+          matrix[j][i]++
+        }
       }
     }
   })

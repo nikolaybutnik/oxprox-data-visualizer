@@ -5,12 +5,12 @@ import {
   type RadarCustomLayerProps,
 } from '@nivo/radar'
 import { nivoTheme } from '../../styles/nivoTheme'
-import { voteColors } from '../../styles/colors'
+import { voteColors, investorColors } from '../../styles/colors'
 import type { RadarDatum } from '../../data/transforms'
 import type { VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import Legend from '../ui/Legend'
-import { getRadarChartMargin, RADAR_INVESTOR_COLORS } from './RadarChart.config'
+import { getRadarChartMargin } from './RadarChart.config'
 import styles from './RadarChart.module.scss'
 
 interface RadarChartProps {
@@ -93,7 +93,7 @@ function RadarChart({ data, keys }: RadarChartProps) {
 
   const investorItems = keys.map((label, i) => ({
     label,
-    color: RADAR_INVESTOR_COLORS[i] ?? RADAR_INVESTOR_COLORS[0],
+    color: investorColors[i] ?? investorColors[0],
   }))
 
   const renderTooltip = useCallback(
@@ -111,9 +111,7 @@ function RadarChart({ data, keys }: RadarChartProps) {
             keys={keys}
             indexBy='resolution'
             maxValue={3}
-            colors={({ index }) =>
-              RADAR_INVESTOR_COLORS[index] ?? RADAR_INVESTOR_COLORS[0]
-            }
+            colors={({ index }) => investorColors[index] ?? investorColors[0]}
             fillOpacity={0.25}
             borderWidth={3}
             gridLevels={3}

@@ -48,6 +48,15 @@ export const esgLabels: Record<string, string> = {
   G: 'Governance',
 }
 
+// One colour per investor — used by radar and chord charts
+export const investorColors = [
+  graphColors.blue,
+  graphColors.teal,
+  graphColors.orange,
+  graphColors.yellow,
+  graphColors.lavender,
+]
+
 export const voteLegendItems = [
   { label: 'For', color: voteColors.For },
   { label: 'Against', color: voteColors.Against },
