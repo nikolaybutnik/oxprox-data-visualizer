@@ -20,6 +20,49 @@
   }
 }
 
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.tabs {
+  display: flex;
+  gap: $space-2;
+}
+
+.tab {
+  position: relative;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $space-1 $space-3;
+  border-radius: 999px;
+  border: 1.5px solid $color-sand;
+  background: transparent;
+  color: $color-stone;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+
+  &[data-active='true'] {
+    border-color: var(--tab-color);
+    color: var(--tab-color);
+  }
+
+  .tabCount {
+    margin-left: $space-1;
+    font-weight: $font-weight-regular;
+    opacity: 0.7;
+  }
+
+  &:hover:not([data-active='true']) {
+    border-color: $color-stone;
+    color: $color-navy;
+  }
+}
+
 .body {
   display: grid;
   grid-template-columns: 1fr;
@@ -42,8 +85,29 @@
 }
 
 .legend {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
   @include bp-md {
     padding-bottom: $space-14;
+  }
+}
+
+.resolutions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.resolutionItem {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-stone;
+
+  &::before {
+    content: '–';
+    margin-right: $space-2;
   }
 }
 

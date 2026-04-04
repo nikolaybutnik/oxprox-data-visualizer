@@ -21,7 +21,28 @@ const heatmapData = toHeatmapData(votes, resolutions, investors)
 const pieData = toPieData(votes)
 const radarData = toRadarData(votes, resolutions, investors)
 const radarKeys = investors.map((i) => i.label)
-const chordData = toChordData(votes, resolutions, investors)
+const chordVariants = (['all', 'E', 'S', 'G'] as const).reduce(
+  (acc, key) => {
+    const filtered =
+      key === 'all'
+        ? resolutions
+        : resolutions.filter((r) => r.esgCategory === key)
+    acc[key] = {
+      data: toChordData(votes, filtered, investors),
+      resolutionCount: filtered.length,
+      resolutionLabels: filtered.map((r) => r.shortLabel),
+    }
+    return acc
+  },
+  {} as Record<
+    'all' | 'E' | 'S' | 'G',
+    {
+      data: ReturnType<typeof toChordData>
+      resolutionCount: number
+      resolutionLabels: string[]
+    }
+  >,
+)
 const esgMap = toEsgMap(resolutions)
 
 function App() {
@@ -34,7 +55,7 @@ function App() {
           <HeatmapChart data={heatmapData} esgMap={esgMap} />
           <PieChart data={pieData} />
           <RadarChart data={radarData} keys={radarKeys} />
-          <ChordChart data={chordData} resolutionCount={resolutions.length} />
+          <ChordChart variants={chordVariants} />
         </div>
       </main>
       <Footer />

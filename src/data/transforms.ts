@@ -213,7 +213,7 @@ export function toChordData(
       for (let j = i + 1; j < investorCount; j++) {
         const voteJ = voteByInvestor.get(investors[j].id)
 
-        if (voteJ === voteI) {
+        if (voteJ === voteI && voteI !== 'Abstain') {
           matrix[i][j]++
           matrix[j][i]++
         }

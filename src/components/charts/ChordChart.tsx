@@ -1,23 +1,43 @@
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
+import type { CSSProperties } from 'react'
 import {
   ResponsiveChord,
   type ArcTooltipComponentProps,
   type RibbonTooltipComponentProps,
 } from '@nivo/chord'
 import { nivoTheme } from '../../styles/nivoTheme'
-import { investorColors } from '../../styles/colors'
+import { investorColors, esgColors, colors } from '../../styles/colors'
 import type { ChordData } from '../../data/transforms'
+import type { EsgCategory } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import Legend from '../ui/Legend'
 import { getChordChartMargin } from './ChordChart.config'
 import styles from './ChordChart.module.scss'
 
-interface ChordChartProps {
+interface ChordVariant {
   data: ChordData
   resolutionCount: number
+  resolutionLabels: string[]
 }
 
-// Arc tooltip — shown when hovering an investor's arc segment
+interface ChordChartProps {
+  variants: {
+    all: ChordVariant
+    E: ChordVariant
+    S: ChordVariant
+    G: ChordVariant
+  }
+}
+
+type EsgFilter = 'all' | EsgCategory
+
+const TABS: { value: EsgFilter; label: string; color: string }[] = [
+  { value: 'all', label: 'All', color: colors.navy },
+  { value: 'E', label: 'E', color: esgColors.E },
+  { value: 'S', label: 'S', color: esgColors.S },
+  { value: 'G', label: 'G', color: esgColors.G },
+]
+
 function ArcTooltip({ arc }: ArcTooltipComponentProps) {
   return (
     <div className={styles.tooltip}>
@@ -29,16 +49,18 @@ function ArcTooltip({ arc }: ArcTooltipComponentProps) {
   )
 }
 
-function ChordChart({ data, resolutionCount }: ChordChartProps) {
-  const { matrix, keys } = data
+function ChordChart({ variants }: ChordChartProps) {
   const isMobile = useIsMobile()
+  const [filter, setFilter] = useState<EsgFilter>('all')
+
+  const { data, resolutionCount } = variants[filter]
+  const { matrix, keys } = data
 
   const investorItems = keys.map((label, i) => ({
     label,
     color: investorColors[i] ?? investorColors[0],
   }))
 
-  // Ribbon tooltip — captures matrix for pairwise count lookup
   const ribbonTooltip = useCallback(
     ({ ribbon }: RibbonTooltipComponentProps) => {
       const count = matrix[ribbon.source.index][ribbon.target.index]
@@ -48,7 +70,8 @@ function ChordChart({ data, resolutionCount }: ChordChartProps) {
             {ribbon.source.id} · {ribbon.target.id}
           </p>
           <p className={styles.tooltipCount}>
-            Agreed on {count} of {resolutionCount} resolutions
+            Agreed on {count} of {resolutionCount} resolution
+            {resolutionCount !== 1 ? 's' : ''}
           </p>
         </div>
       )
@@ -58,10 +81,31 @@ function ChordChart({ data, resolutionCount }: ChordChartProps) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Investor Agreement</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Investor Agreement</h2>
+        <div className={styles.tabs} role='tablist'>
+          {TABS.map((tab) => (
+            <button
+              key={tab.value}
+              role='tab'
+              aria-selected={filter === tab.value}
+              className={styles.tab}
+              style={{ '--tab-color': tab.color } as CSSProperties}
+              data-active={filter === tab.value}
+              onClick={() => setFilter(tab.value)}
+            >
+              {tab.label}
+              <span className={styles.tabCount}>
+                {variants[tab.value].resolutionCount}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className={styles.body}>
         <div className={styles.chart}>
           <ResponsiveChord
+            key={filter}
             data={matrix}
             keys={keys}
             colors={({ index }) => investorColors[index] ?? investorColors[0]}
@@ -78,6 +122,7 @@ function ChordChart({ data, resolutionCount }: ChordChartProps) {
             activeRibbonOpacity={0.75}
             inactiveRibbonOpacity={0.1}
             enableLabel={true}
+            label={(arc) => (arc.value > 0 ? arc.id : '')}
             labelOffset={12}
             labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
             theme={nivoTheme}
@@ -87,6 +132,13 @@ function ChordChart({ data, resolutionCount }: ChordChartProps) {
           />
         </div>
         <div className={styles.legend}>
+          <ul className={styles.resolutions}>
+            {variants[filter].resolutionLabels.map((label) => (
+              <li key={label} className={styles.resolutionItem}>
+                {label}
+              </li>
+            ))}
+          </ul>
           <Legend
             items={investorItems}
             direction={isMobile ? 'row' : 'column'}

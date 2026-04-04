@@ -18,8 +18,18 @@ const investors: Investor[] = [
 ]
 
 const resolutions: Resolution[] = [
-  { id: 'res-1', label: 'Proposal 1 — Board Diversity', shortLabel: 'Board Diversity', esgCategory: 'S' },
-  { id: 'res-2', label: 'Proposal 2 — CEO Pay Ratio',   shortLabel: 'CEO Pay Ratio',   esgCategory: 'G' },
+  {
+    id: 'res-1',
+    label: 'Proposal 1 — Board Diversity',
+    shortLabel: 'Board Diversity',
+    esgCategory: 'S',
+  },
+  {
+    id: 'res-2',
+    label: 'Proposal 2 — CEO Pay Ratio',
+    shortLabel: 'CEO Pay Ratio',
+    esgCategory: 'G',
+  },
 ]
 
 const votes: VoteRecord[] = [
@@ -74,7 +84,7 @@ describe('toHeatmapData', () => {
 
   it('maps vote values to correct numeric representations', () => {
     const result = toHeatmapData(votes, resolutions, investors)
-    const forCell    = result[0].data.find((d) => d.x === 'Investor A')
+    const forCell = result[0].data.find((d) => d.x === 'Investor A')
     const againstCell = result[0].data.find((d) => d.x === 'Investor B')
     expect(forCell?.y).toBe(1)
     expect(againstCell?.y).toBe(-1)
@@ -145,8 +155,8 @@ describe('toRadarData', () => {
 
   it('maps For to 3, Against to 1, Abstain to 2', () => {
     const result = toRadarData(votes, resolutions, investors)
-    expect(result[0]['Investor A']).toBe(3)    // For
-    expect(result[0]['Investor B']).toBe(1)    // Against
+    expect(result[0]['Investor A']).toBe(3) // For
+    expect(result[0]['Investor B']).toBe(1) // Against
   })
 
   it('returns empty array when resolutions list is empty', () => {
@@ -189,5 +199,237 @@ describe('toChordData', () => {
   it('returns a zero matrix when votes list is empty', () => {
     const result = toChordData([], resolutions, investors)
     result.matrix.forEach((row) => row.forEach((val) => expect(val).toBe(0)))
+  })
+
+  it('counts Against-Against as agreement but not Abstain-Abstain', () => {
+    const againstVotes: VoteRecord[] = [
+      { resolutionId: 'res-1', investorId: 'inv-a', vote: 'Against' },
+      { resolutionId: 'res-1', investorId: 'inv-b', vote: 'Against' },
+    ]
+    const { matrix: againstMatrix } = toChordData(
+      againstVotes,
+      resolutions,
+      investors,
+    )
+    expect(againstMatrix[0][1]).toBe(1) // Against-Against counts
+
+    const abstainVotes: VoteRecord[] = [
+      { resolutionId: 'res-1', investorId: 'inv-a', vote: 'Abstain' },
+      { resolutionId: 'res-1', investorId: 'inv-b', vote: 'Abstain' },
+    ]
+    const { matrix: abstainMatrix } = toChordData(
+      abstainVotes,
+      resolutions,
+      investors,
+    )
+    expect(abstainMatrix[0][1]).toBe(0) // Abstain-Abstain does not count
+  })
+})
+
+// =============================================================================
+// toChordData — G-filter matrix spot-check against full dataset
+// =============================================================================
+describe('toChordData G filter', () => {
+  // Import real dataset inline for this check
+  const realInvestors = [
+    { id: 'investor-a', label: 'Investor A' },
+    { id: 'investor-b', label: 'Investor B' },
+    { id: 'investor-c', label: 'Investor C' },
+    { id: 'investor-d', label: 'Investor D' },
+    { id: 'investor-e', label: 'Investor E' },
+  ]
+  const gResolutions = [
+    {
+      id: 'proposal-2',
+      label: 'CEO Pay Ratio',
+      shortLabel: 'CEO Pay Ratio',
+      esgCategory: 'G' as const,
+    },
+    {
+      id: 'proposal-4',
+      label: 'Independent Chair',
+      shortLabel: 'Independent Chair',
+      esgCategory: 'G' as const,
+    },
+    {
+      id: 'proposal-5',
+      label: 'Share Buyback',
+      shortLabel: 'Share Buyback',
+      esgCategory: 'G' as const,
+    },
+  ]
+  const realVotes = [
+    // CEO Pay Ratio
+    {
+      resolutionId: 'proposal-2',
+      investorId: 'investor-a',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-2',
+      investorId: 'investor-b',
+      vote: 'For' as const,
+    },
+    {
+      resolutionId: 'proposal-2',
+      investorId: 'investor-c',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-2',
+      investorId: 'investor-d',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-2',
+      investorId: 'investor-e',
+      vote: 'For' as const,
+    },
+    // Independent Chair
+    {
+      resolutionId: 'proposal-4',
+      investorId: 'investor-a',
+      vote: 'For' as const,
+    },
+    {
+      resolutionId: 'proposal-4',
+      investorId: 'investor-b',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-4',
+      investorId: 'investor-c',
+      vote: 'For' as const,
+    },
+    {
+      resolutionId: 'proposal-4',
+      investorId: 'investor-d',
+      vote: 'For' as const,
+    },
+    {
+      resolutionId: 'proposal-4',
+      investorId: 'investor-e',
+      vote: 'For' as const,
+    },
+    // Share Buyback
+    {
+      resolutionId: 'proposal-5',
+      investorId: 'investor-a',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-5',
+      investorId: 'investor-b',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-5',
+      investorId: 'investor-c',
+      vote: 'For' as const,
+    },
+    {
+      resolutionId: 'proposal-5',
+      investorId: 'investor-d',
+      vote: 'Against' as const,
+    },
+    {
+      resolutionId: 'proposal-5',
+      investorId: 'investor-e',
+      vote: 'Against' as const,
+    },
+  ]
+
+  it('A-D agree on all 3 G resolutions', () => {
+    const { matrix } = toChordData(realVotes, gResolutions, realInvestors)
+    expect(matrix[0][3]).toBe(3) // A-D
+  })
+
+  it('B-C never agree on G resolutions', () => {
+    const { matrix } = toChordData(realVotes, gResolutions, realInvestors)
+    expect(matrix[1][2]).toBe(0) // B-C
+  })
+
+  it('G matrix row sums differ from All', () => {
+    const allResolutions = [
+      ...gResolutions,
+      {
+        id: 'proposal-1',
+        label: 'Board Diversity',
+        shortLabel: 'Board Diversity',
+        esgCategory: 'S' as const,
+      },
+      {
+        id: 'proposal-3',
+        label: 'Climate Disclosure',
+        shortLabel: 'Climate Disclosure',
+        esgCategory: 'E' as const,
+      },
+    ]
+    const allVotes = [
+      ...realVotes,
+      {
+        resolutionId: 'proposal-1',
+        investorId: 'investor-a',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-1',
+        investorId: 'investor-b',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-1',
+        investorId: 'investor-c',
+        vote: 'Against' as const,
+      },
+      {
+        resolutionId: 'proposal-1',
+        investorId: 'investor-d',
+        vote: 'Abstain' as const,
+      },
+      {
+        resolutionId: 'proposal-1',
+        investorId: 'investor-e',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-3',
+        investorId: 'investor-a',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-3',
+        investorId: 'investor-b',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-3',
+        investorId: 'investor-c',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-3',
+        investorId: 'investor-d',
+        vote: 'For' as const,
+      },
+      {
+        resolutionId: 'proposal-3',
+        investorId: 'investor-e',
+        vote: 'Against' as const,
+      },
+    ]
+    const { matrix: gMatrix } = toChordData(
+      realVotes,
+      gResolutions,
+      realInvestors,
+    )
+    const { matrix: allMatrix } = toChordData(
+      allVotes,
+      allResolutions,
+      realInvestors,
+    )
+    const gRowSums = gMatrix.map((row) => row.reduce((a, b) => a + b, 0))
+    const allRowSums = allMatrix.map((row) => row.reduce((a, b) => a + b, 0))
+    expect(gRowSums).not.toEqual(allRowSums)
   })
 })
