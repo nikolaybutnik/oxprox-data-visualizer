@@ -122,48 +122,54 @@ function ChordChart({ variants }: ChordChartProps) {
           on environmental topics but diverge on governance — a pattern
           invisible in any tabular view.
         </p>
-        <div className={styles.tabs} role='tablist'>
-          {TABS.map((tab) => (
-            <button
-              key={tab.value}
-              role='tab'
-              aria-selected={filter === tab.value}
-              className={styles.tab}
-              style={{ '--tab-color': tab.color } as CSSProperties}
-              data-active={filter === tab.value}
-              onClick={() => setFilter(tab.value)}
-            >
-              {tab.label}
-              <span className={styles.tabCount}>
-                {variants[tab.value].resolutionCount}
-              </span>
-            </button>
-          ))}
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>ESG Category</span>
+          <div className={styles.tabs} role='tablist'>
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                role='tab'
+                aria-selected={filter === tab.value}
+                className={styles.tab}
+                style={{ '--tab-color': tab.color } as CSSProperties}
+                data-active={filter === tab.value}
+                onClick={() => setFilter(tab.value)}
+              >
+                {tab.label}
+                <span className={styles.tabCount}>
+                  {variants[tab.value].resolutionCount}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-        <div className={styles.filters}>
-          <button
-            className={styles.filterBtn}
-            data-active={allEnabled}
-            style={{ '--filter-color': colors.navy } as CSSProperties}
-            onClick={selectAll}
-          >
-            All
-          </button>
-          {keys.map((key, i) => (
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Investors</span>
+          <div className={styles.filters}>
             <button
-              key={key}
               className={styles.filterBtn}
-              data-active={!disabled.has(key)}
-              style={
-                {
-                  '--filter-color': investorColors[i] ?? investorColors[0],
-                } as CSSProperties
-              }
-              onClick={() => toggleInvestor(key)}
+              data-active={allEnabled}
+              style={{ '--filter-color': colors.navy } as CSSProperties}
+              onClick={selectAll}
             >
-              {key}
+              All
             </button>
-          ))}
+            {keys.map((key, i) => (
+              <button
+                key={key}
+                className={styles.filterBtn}
+                data-active={!disabled.has(key)}
+                style={
+                  {
+                    '--filter-color': investorColors[i] ?? investorColors[0],
+                  } as CSSProperties
+                }
+                onClick={() => toggleInvestor(key)}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       <div className={styles.body}>

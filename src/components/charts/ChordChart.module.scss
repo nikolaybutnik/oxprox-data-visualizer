@@ -23,7 +23,22 @@
 .header {
   display: flex;
   flex-direction: column;
+  gap: $space-4;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
   gap: $space-2;
+}
+
+.filterLabel {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-stone;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .description {
