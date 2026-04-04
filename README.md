@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# OxProx — Investor Voting Data Visualization
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive data visualisation dashboard showing how five institutional investors voted across five ESG resolutions at a company shareholder meeting.
 
-Currently, two official plugins are available:
+Built for OxProx to demonstrate how rich, interactive visualisations can make complex shareholder voting data intuitive, informative, and actionable.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Running locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Prerequisites:** Node.js 18+
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173](http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To build for production:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run preview
+```
+
+To run the data transform unit tests:
+
+```bash
+npm run test
+```
+
+---
+
+## What was built
+
+The spec asked for a single chart with tooltips and responsive layout. Rather than stop there, the dashboard presents the same dataset through five complementary chart views — each suited to a different analytical lens — toggled via an animated tab interface.
+
+### Chart views
+
+| Tab | Chart | What it answers |
+|-----|-------|-----------------|
+| Votes by Resolution | Stacked bar | How did the full group vote on each proposal? Were resolutions contested or unanimous? |
+| Voting Grid | Heatmap | Exactly which investor voted what on each resolution — the full matrix at a glance |
+| Distribution | Donut | What is the overall For / Against / Abstain split across all 25 votes? |
+| Profiles | Radar | What is each investor's overall voting personality? Consistent For? Mixed? Against-leaning? |
+| Agreements | Chord | Which investors tend to vote the same way as each other, and on which ESG category? |
+
+The chord diagram includes an **E / S / G / All** filter so agreement patterns can be compared by ESG category. The radar chart labels each grid ring (Against / Abstain / For) directly on the chart to avoid requiring a separate legend.
+
+### Technical decisions
+
+**Stack:** React 19, TypeScript, Vite, Nivo (charts), Framer Motion (transitions), SCSS Modules.
+
+**Data layer:** All transforms (`toBarData`, `toHeatmapData`, `toPieData`, `toRadarData`, `toChordData`) are pure functions that accept raw arrays and return Nivo-compatible shapes. They're called once at module level in `App.tsx` and passed down as props — no data fetching inside components, no shared mutable state.
+
+**Performance:** Each chart is `React.lazy`-loaded and code-split so only the active chart's Nivo package is fetched. The bar chart (always shown first) is eagerly imported. The other four are prefetched in the background at module load time so tab switches feel instant.
+
+**Heatmap tooltips:** Nivo's `cellComponent` prop creates one React component instance per cell; all 25 re-render on every hover event. To avoid this, the heatmap uses a custom `layers` entry (`HeatmapCellLayer`) that renders cells as plain SVG and uses `useTooltip` from `@nivo/tooltip` — the same mechanism `ResponsiveBar` uses internally. This gives Nivo-standard tooltip behaviour without the 25-instance overhead.
+
+**ESG indicators:** The bar chart and heatmap both render E / S / G category badges with hover tooltips. These use React `useState` (not imperative DOM) so they stay in sync across resize and re-render.
+
+**Responsive:** Mobile-first SCSS with a single `768px` breakpoint. Charts use CSS Grid (`1fr auto`) for the legend column — not flexbox — because Nivo's `ResizeObserver` measures the container before flex layout resolves, which would produce a 0px width and a blank chart.
+
+---
+
+## Project structure
+
+```
+src/
+  components/
+    charts/       — One .tsx + .config.ts + .module.scss per chart
+    ui/           — Header, Footer, Legend, ChartToggle
+  data/
+    types.ts      — Domain types
+    dataset.ts    — Hard-coded sample data
+    transforms.ts — Pure data transform functions
+    __tests__/    — 24 Vitest unit tests
+  styles/         — SCSS tokens, reset, global styles, Nivo theme
 ```
