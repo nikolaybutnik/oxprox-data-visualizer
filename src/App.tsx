@@ -1,10 +1,6 @@
 import Header from './components/ui/Header'
 import Footer from './components/ui/Footer'
-import BarChart from './components/charts/BarChart'
-import HeatmapChart from './components/charts/HeatmapChart'
-import PieChart from './components/charts/PieChart'
-import RadarChart from './components/charts/RadarChart'
-import ChordChart from './components/charts/ChordChart'
+import ChartToggle from './components/ui/ChartToggle'
 import { investors, resolutions, votes } from './data/dataset'
 import {
   toBarData,
@@ -51,11 +47,16 @@ function App() {
       <Header />
       <main className={styles.main}>
         <div className={styles.container}>
-          <BarChart data={barData} votersMap={votersMap} esgMap={esgMap} />
-          <HeatmapChart data={heatmapData} esgMap={esgMap} />
-          <PieChart data={pieData} />
-          <RadarChart data={radarData} keys={radarKeys} />
-          <ChordChart variants={chordVariants} />
+          <ChartToggle
+            barData={barData}
+            votersMap={votersMap}
+            esgMap={esgMap}
+            heatmapData={heatmapData}
+            pieData={pieData}
+            radarData={radarData}
+            radarKeys={radarKeys}
+            chordVariants={chordVariants}
+          />
         </div>
       </main>
       <Footer />
