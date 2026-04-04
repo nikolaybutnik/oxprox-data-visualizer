@@ -1,10 +1,10 @@
 import { memo, useCallback, useMemo } from 'react'
 import { ResponsivePie, type PieTooltipProps } from '@nivo/pie'
 import { nivoTheme } from '../../styles/nivoTheme'
-import { voteColors } from '../../styles/colors'
+import { voteColors, voteLegendItems } from '../../styles/colors'
 import type { PieDatum } from '../../data/transforms'
 import useIsMobile from '../../hooks/useIsMobile'
-import VoteLegend from '../ui/VoteLegend'
+import Legend from '../ui/Legend'
 import { getPieChartMargin } from './PieChart.config'
 import styles from './PieChart.module.scss'
 
@@ -69,7 +69,10 @@ function PieChart({ data }: PieChartProps) {
           />
         </div>
         <div className={styles.legend}>
-          <VoteLegend direction={isMobile ? 'row' : 'column'} />
+          <Legend
+            items={voteLegendItems}
+            direction={isMobile ? 'row' : 'column'}
+          />
         </div>
       </div>
     </div>

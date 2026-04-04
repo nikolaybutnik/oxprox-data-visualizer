@@ -6,11 +6,16 @@ import {
 } from '@nivo/heatmap'
 import { useTooltip } from '@nivo/tooltip'
 import { nivoTheme } from '../../styles/nivoTheme'
-import { voteColors, esgColors, esgLabels } from '../../styles/colors'
+import {
+  voteColors,
+  esgColors,
+  esgLabels,
+  voteLegendItems,
+} from '../../styles/colors'
 import type { HeatmapDatum, HeatmapCell } from '../../data/transforms'
 import type { EsgCategory, VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import VoteLegend from '../ui/VoteLegend'
+import Legend from '../ui/Legend'
 import { getHeatmapMargin, getHeatmapAxisTop } from './HeatmapChart.config'
 import styles from './HeatmapChart.module.scss'
 
@@ -226,7 +231,10 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
           )}
         </div>
         <div className={styles.legend}>
-          <VoteLegend direction={isMobile ? 'row' : 'column'} />
+          <Legend
+            items={voteLegendItems}
+            direction={isMobile ? 'row' : 'column'}
+          />
         </div>
       </div>
     </div>

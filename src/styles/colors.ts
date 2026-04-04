@@ -47,3 +47,9 @@ export const esgLabels: Record<string, string> = {
   S: 'Social',
   G: 'Governance',
 }
+
+export const voteLegendItems = [
+  { label: 'For',     color: voteColors.For },
+  { label: 'Against', color: voteColors.Against },
+  { label: 'Abstain', color: voteColors.Abstain },
+]

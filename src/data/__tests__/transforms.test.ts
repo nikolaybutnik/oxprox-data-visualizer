@@ -143,10 +143,10 @@ describe('toRadarData', () => {
     expect(result[0]).toHaveProperty('Investor B')
   })
 
-  it('maps For to 1, Against to 0, Abstain to 0.5', () => {
+  it('maps For to 3, Against to 1, Abstain to 2', () => {
     const result = toRadarData(votes, resolutions, investors)
-    expect(result[0]['Investor A']).toBe(1)    // For
-    expect(result[0]['Investor B']).toBe(0)    // Against
+    expect(result[0]['Investor A']).toBe(3)    // For
+    expect(result[0]['Investor B']).toBe(1)    // Against
   })
 
   it('returns empty array when resolutions list is empty', () => {
@@ -154,11 +154,11 @@ describe('toRadarData', () => {
     expect(result).toEqual([])
   })
 
-  it('defaults missing votes to Abstain (0.5)', () => {
+  it('defaults missing votes to Abstain (2)', () => {
     const result = toRadarData([], resolutions, investors)
     result.forEach((datum) => {
       investors.forEach((inv) => {
-        expect(datum[inv.label]).toBe(0.5)
+        expect(datum[inv.label]).toBe(2)
       })
     })
   })

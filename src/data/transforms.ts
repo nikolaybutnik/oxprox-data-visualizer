@@ -138,9 +138,9 @@ export function toPieData(votes: VoteRecord[]): PieDatum[] {
 // Values: 0 (Against), 0.5 (Abstain), 1 (For)
 // -----------------------------------------------------------------------------
 const VOTE_TO_RADAR: Record<VoteValue, number> = {
-  For: 1,
-  Against: 0,
-  Abstain: 0.5,
+  For: 3,
+  Abstain: 2,
+  Against: 1,
 }
 
 export interface RadarDatum {
