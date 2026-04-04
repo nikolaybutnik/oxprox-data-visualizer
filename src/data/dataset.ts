@@ -2,7 +2,13 @@
 // Dataset — OxProx Investor Voting Sample Data
 // =============================================================================
 
-export type { VoteValue, EsgCategory, Investor, Resolution, VoteRecord } from './types'
+export type {
+  VoteValue,
+  EsgCategory,
+  Investor,
+  Resolution,
+  VoteRecord,
+} from './types'
 import type { Investor, Resolution, VoteRecord } from './types'
 
 export const investors: Investor[] = [

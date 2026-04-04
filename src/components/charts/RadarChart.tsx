@@ -1,5 +1,9 @@
 import { memo, useCallback } from 'react'
-import { ResponsiveRadar, type RadarSliceTooltipProps, type RadarCustomLayerProps } from '@nivo/radar'
+import {
+  ResponsiveRadar,
+  type RadarSliceTooltipProps,
+  type RadarCustomLayerProps,
+} from '@nivo/radar'
 import { nivoTheme } from '../../styles/nivoTheme'
 import { voteColors } from '../../styles/colors'
 import type { RadarDatum } from '../../data/transforms'
@@ -23,11 +27,15 @@ const VALUE_TO_VOTE: Record<number, VoteValue> = {
 const RING_LABELS = [
   { value: 1, label: 'Against', color: voteColors.Against },
   { value: 2, label: 'Abstain', color: voteColors.Abstain },
-  { value: 3, label: 'For',     color: voteColors.For },
+  { value: 3, label: 'For', color: voteColors.For },
 ]
 
 // Custom layer that annotates each grid ring with its vote label
-function GridRingLabels({ centerX, centerY, radiusScale }: RadarCustomLayerProps<RadarDatum>) {
+function GridRingLabels({
+  centerX,
+  centerY,
+  radiusScale,
+}: RadarCustomLayerProps<RadarDatum>) {
   return (
     <g style={{ pointerEvents: 'none' }}>
       {RING_LABELS.map(({ value, label, color }) => (
@@ -48,7 +56,14 @@ function GridRingLabels({ centerX, centerY, radiusScale }: RadarCustomLayerProps
   )
 }
 
-const RADAR_LAYERS = ['grid', GridRingLabels, 'layers', 'slices', 'dots', 'legends'] as const
+const RADAR_LAYERS = [
+  'grid',
+  GridRingLabels,
+  'layers',
+  'slices',
+  'dots',
+  'legends',
+] as const
 
 function RadarTooltip({ index, data }: RadarSliceTooltipProps) {
   return (
@@ -60,7 +75,10 @@ function RadarTooltip({ index, data }: RadarSliceTooltipProps) {
           <p key={id} className={styles.tooltipRow}>
             <span className={styles.tooltipDot} style={{ background: color }} />
             <span className={styles.tooltipInvestor}>{id}</span>
-            <span className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
+            <span
+              className={styles.tooltipVote}
+              style={{ color: voteColors[vote] }}
+            >
               {vote}
             </span>
           </p>
@@ -93,7 +111,9 @@ function RadarChart({ data, keys }: RadarChartProps) {
             keys={keys}
             indexBy='resolution'
             maxValue={3}
-            colors={({ index }) => RADAR_INVESTOR_COLORS[index] ?? RADAR_INVESTOR_COLORS[0]}
+            colors={({ index }) =>
+              RADAR_INVESTOR_COLORS[index] ?? RADAR_INVESTOR_COLORS[0]
+            }
             fillOpacity={0.25}
             borderWidth={3}
             gridLevels={3}
@@ -109,7 +129,10 @@ function RadarChart({ data, keys }: RadarChartProps) {
           />
         </div>
         <div className={styles.legend}>
-          <Legend items={investorItems} direction={isMobile ? 'row' : 'column'} />
+          <Legend
+            items={investorItems}
+            direction={isMobile ? 'row' : 'column'}
+          />
         </div>
       </div>
     </div>
@@ -117,3 +140,5 @@ function RadarChart({ data, keys }: RadarChartProps) {
 }
 
 export default memo(RadarChart)
+
+// claude --resume 992ea265-a7c2-4a0f-9eb0-2c21792d096a

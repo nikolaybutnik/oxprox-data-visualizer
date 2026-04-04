@@ -2,7 +2,13 @@
 // Data Transforms — Shape raw dataset into per-chart Nivo-compatible formats
 // =============================================================================
 
-import type { EsgCategory, Investor, Resolution, VoteRecord, VoteValue } from './types'
+import type {
+  EsgCategory,
+  Investor,
+  Resolution,
+  VoteRecord,
+  VoteValue,
+} from './types'
 
 // -----------------------------------------------------------------------------
 // Stacked Bar Chart
@@ -30,14 +36,17 @@ export interface BarData {
 export function toBarData(
   votes: VoteRecord[],
   resolutions: Resolution[],
-  investors: Investor[]
+  investors: Investor[],
 ): BarData {
-  if (!resolutions.length || !investors.length) return { data: [], votersMap: {} }
+  if (!resolutions.length || !investors.length)
+    return { data: [], votersMap: {} }
 
   const votersMap: BarVotersMap = {}
 
   const data = resolutions.map((resolution) => {
-    const resolutionVotes = votes.filter((v) => v.resolutionId === resolution.id)
+    const resolutionVotes = votes.filter(
+      (v) => v.resolutionId === resolution.id,
+    )
 
     const grouped: Record<VoteValue, string[]> = {
       For: [],
@@ -89,7 +98,7 @@ export interface HeatmapDatum {
 export function toHeatmapData(
   votes: VoteRecord[],
   resolutions: Resolution[],
-  investors: Investor[]
+  investors: Investor[],
 ): HeatmapDatum[] {
   if (!resolutions.length || !investors.length) return []
 
@@ -97,7 +106,7 @@ export function toHeatmapData(
     id: resolution.shortLabel,
     data: investors.map((investor) => {
       const record = votes.find(
-        (v) => v.resolutionId === resolution.id && v.investorId === investor.id
+        (v) => v.resolutionId === resolution.id && v.investorId === investor.id,
       )
       const vote: VoteValue = record?.vote ?? 'Abstain'
       return {
@@ -151,7 +160,7 @@ export interface RadarDatum {
 export function toRadarData(
   votes: VoteRecord[],
   resolutions: Resolution[],
-  investors: Investor[]
+  investors: Investor[],
 ): RadarDatum[] {
   if (!resolutions.length || !investors.length) return []
 
@@ -159,7 +168,7 @@ export function toRadarData(
     const datum: RadarDatum = { resolution: resolution.shortLabel }
     investors.forEach((investor) => {
       const record = votes.find(
-        (v) => v.resolutionId === resolution.id && v.investorId === investor.id
+        (v) => v.resolutionId === resolution.id && v.investorId === investor.id,
       )
       datum[investor.label] = VOTE_TO_RADAR[record?.vote ?? 'Abstain']
     })
@@ -179,7 +188,7 @@ export interface ChordData {
 export function toChordData(
   votes: VoteRecord[],
   resolutions: Resolution[],
-  investors: Investor[]
+  investors: Investor[],
 ): ChordData {
   const keys = investors.map((i) => i.label)
   const n = investors.length
@@ -189,13 +198,19 @@ export function toChordData(
   const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0))
 
   resolutions.forEach((resolution) => {
-    const resolutionVotes = votes.filter((v) => v.resolutionId === resolution.id)
+    const resolutionVotes = votes.filter(
+      (v) => v.resolutionId === resolution.id,
+    )
 
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
         if (i === j) continue
-        const voteI = resolutionVotes.find((v) => v.investorId === investors[i].id)?.vote
-        const voteJ = resolutionVotes.find((v) => v.investorId === investors[j].id)?.vote
+        const voteI = resolutionVotes.find(
+          (v) => v.investorId === investors[i].id,
+        )?.vote
+        const voteJ = resolutionVotes.find(
+          (v) => v.investorId === investors[j].id,
+        )?.vote
         if (voteI && voteJ && voteI === voteJ) matrix[i][j]++
       }
     }
@@ -208,6 +223,10 @@ export function toChordData(
 // ESG Map
 // Lookup map from resolution shortLabel to ESG category, used by chart layers
 // -----------------------------------------------------------------------------
-export function toEsgMap(resolutions: Resolution[]): Record<string, EsgCategory> {
-  return Object.fromEntries(resolutions.map((r) => [r.shortLabel, r.esgCategory]))
+export function toEsgMap(
+  resolutions: Resolution[],
+): Record<string, EsgCategory> {
+  return Object.fromEntries(
+    resolutions.map((r) => [r.shortLabel, r.esgCategory]),
+  )
 }

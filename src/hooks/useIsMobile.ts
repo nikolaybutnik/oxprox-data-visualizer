@@ -4,11 +4,13 @@ const MOBILE_BREAKPOINT = 768
 
 function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = useState(
-    () => window.innerWidth < MOBILE_BREAKPOINT
+    () => window.innerWidth < MOBILE_BREAKPOINT,
   )
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const mediaQuery = window.matchMedia(
+      `(max-width: ${MOBILE_BREAKPOINT - 1}px)`,
+    )
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
 
     mediaQuery.addEventListener('change', handler)
