@@ -1,15 +1,21 @@
-import { memo, useCallback } from 'react'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from 'react'
 import {
   ResponsiveRadar,
   type RadarSliceTooltipProps,
   type RadarCustomLayerProps,
 } from '@nivo/radar'
 import { nivoTheme } from '../../styles/nivoTheme'
-import { voteColors, investorColors } from '../../styles/colors'
+import { voteColors, investorColors, colors } from '../../styles/colors'
 import type { RadarDatum } from '../../data/transforms'
 import type { VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import Legend from '../ui/Legend'
 import { getRadarChartMargin } from './RadarChart.config'
 import styles from './RadarChart.module.scss'
 
@@ -30,7 +36,6 @@ const RING_LABELS = [
   { value: 3, label: 'For', color: voteColors.For },
 ]
 
-// Custom layer that annotates each grid ring with its vote label
 function GridRingLabels({
   centerX,
   centerY,
@@ -91,10 +96,36 @@ function RadarTooltip({ index, data }: RadarSliceTooltipProps) {
 function RadarChart({ data, keys }: RadarChartProps) {
   const isMobile = useIsMobile()
 
-  const investorItems = keys.map((label, i) => ({
-    label,
-    color: investorColors[i] ?? investorColors[0],
-  }))
+  // Tracks which investors are hidden. Empty set = all visible (default).
+  const [disabled, setDisabled] = useState<Set<string>>(new Set())
+
+  // Reset to all-visible whenever the dataset changes (keys reference changes)
+  useEffect(() => {
+    setDisabled(new Set())
+  }, [keys])
+
+  const activeKeys = useMemo(
+    () => keys.filter((k) => !disabled.has(k)),
+    [keys, disabled],
+  )
+
+  const allEnabled = disabled.size === 0
+
+  const toggleInvestor = useCallback(
+    (key: string) => {
+      setDisabled((prev) => {
+        // Prevent deselecting the last visible investor
+        if (!prev.has(key) && keys.filter((k) => !prev.has(k)).length === 1)
+          return prev
+        const next = new Set(prev)
+        next.has(key) ? next.delete(key) : next.add(key)
+        return next
+      })
+    },
+    [keys],
+  )
+
+  const selectAll = useCallback(() => setDisabled(new Set()), [])
 
   const renderTooltip = useCallback(
     (props: RadarSliceTooltipProps) => <RadarTooltip {...props} />,
@@ -106,19 +137,47 @@ function RadarChart({ data, keys }: RadarChartProps) {
       <div className={styles.header}>
         <h2 className={styles.title}>Voting Profile by Investor</h2>
         <p className={styles.description}>
-          Each investor's polygon encodes their overall voting personality. A large, regular shape
-          signals consistent ESG alignment; a compact or irregular shape reveals a more selective
-          approach. Designed for peer comparison and manager profiling.
+          Each investor's polygon encodes their overall voting personality. A
+          large, regular shape signals consistent ESG alignment; a compact or
+          irregular shape reveals a more selective approach. Designed for peer
+          comparison and manager profiling.
         </p>
+        <div className={styles.filters}>
+          <button
+            className={styles.filterBtn}
+            data-active={allEnabled}
+            style={{ '--filter-color': colors.navy } as CSSProperties}
+            onClick={selectAll}
+          >
+            All
+          </button>
+          {keys.map((key, i) => (
+            <button
+              key={key}
+              className={styles.filterBtn}
+              data-active={!disabled.has(key)}
+              style={
+                {
+                  '--filter-color': investorColors[i] ?? investorColors[0],
+                } as CSSProperties
+              }
+              onClick={() => toggleInvestor(key)}
+            >
+              {key}
+            </button>
+          ))}
+        </div>
       </div>
       <div className={styles.body}>
         <div className={styles.chart}>
           <ResponsiveRadar
             data={data}
-            keys={keys}
+            keys={activeKeys}
             indexBy='resolution'
             maxValue={3}
-            colors={({ index }) => investorColors[index] ?? investorColors[0]}
+            colors={({ key }) =>
+              investorColors[keys.indexOf(key as string)] ?? investorColors[0]
+            }
             fillOpacity={0.25}
             borderWidth={3}
             gridLevels={3}
@@ -133,17 +192,9 @@ function RadarChart({ data, keys }: RadarChartProps) {
             sliceTooltip={renderTooltip}
           />
         </div>
-        <div className={styles.legend}>
-          <Legend
-            items={investorItems}
-            direction={isMobile ? 'row' : 'column'}
-          />
-        </div>
       </div>
     </div>
   )
 }
 
 export default memo(RadarChart)
-
-// claude --resume 992ea265-a7c2-4a0f-9eb0-2c21792d096a

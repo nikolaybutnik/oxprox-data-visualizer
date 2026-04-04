@@ -23,7 +23,38 @@
 .header {
   display: flex;
   flex-direction: column;
+  gap: $space-3;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
   gap: $space-2;
+}
+
+.filterBtn {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $space-1 $space-3;
+  border-radius: 999px;
+  border: 1.5px solid $color-sand;
+  background: transparent;
+  color: $color-stone;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+
+  &[data-active='true'] {
+    border-color: var(--filter-color);
+    color: var(--filter-color);
+  }
+
+  &:hover:not([data-active='true']) {
+    border-color: $color-stone;
+    color: $color-navy;
+  }
 }
 
 .description {
@@ -52,12 +83,6 @@
 
   @include bp-md {
     height: 440px;
-  }
-}
-
-.legend {
-  @include bp-md {
-    padding-bottom: $space-20;
   }
 }
 
