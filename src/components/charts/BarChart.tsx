@@ -9,7 +9,11 @@ import { voteColors, esgColors, esgLabels } from '../../styles/colors'
 import type { BarDatum, BarVotersMap } from '../../data/transforms'
 import type { EsgCategory, VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import { getBarChartMargin, getBarAxisBottom, BAR_AXIS_LEFT } from './BarChart.config'
+import {
+  getBarChartMargin,
+  getBarAxisBottom,
+  BAR_AXIS_LEFT,
+} from './BarChart.config'
 import VoteLegend from '../ui/VoteLegend'
 import styles from './BarChart.module.scss'
 
@@ -114,12 +118,23 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
   )
 
   const renderTooltip = useCallback(
-    (props: BarTooltipProps<BarDatum>) => <BarTooltip {...props} votersMap={votersMap} />,
+    (props: BarTooltipProps<BarDatum>) => (
+      <BarTooltip {...props} votersMap={votersMap} />
+    ),
     [votersMap],
   )
 
   const layers = useMemo(
-    () => ['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', EsgLayer] as const,
+    () =>
+      [
+        'grid',
+        'axes',
+        'bars',
+        'markers',
+        'legends',
+        'annotations',
+        EsgLayer,
+      ] as const,
     [EsgLayer],
   )
 
