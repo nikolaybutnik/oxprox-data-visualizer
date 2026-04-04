@@ -48,13 +48,21 @@ export const esgLabels: Record<string, string> = {
   G: 'Governance',
 }
 
-// One colour per investor — used by radar and chord charts
+// One colour per investor — used by radar and chord charts.
+// Ordered for maximum visual distinction; first 5 match the sample dataset.
 export const investorColors = [
   graphColors.blue,
   graphColors.teal,
   graphColors.orange,
   graphColors.yellow,
   graphColors.lavender,
+  graphColors.lime,
+  graphColors.crimson,
+  graphColors.pink,
+  graphColors.blueLight,
+  graphColors.tealDark,
+  graphColors.olive,
+  graphColors.navy,
 ]
 
 export const voteLegendItems = [

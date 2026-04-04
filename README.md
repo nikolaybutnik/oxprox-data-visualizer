@@ -48,6 +48,12 @@ The spec asked for a single chart with tooltips and responsive layout. Rather th
 
 The chord diagram includes an **E / S / G / All** filter so agreement patterns can be compared by ESG category. The radar chart labels each grid ring (Against / Abstain / For) directly on the chart to avoid requiring a separate legend.
 
+### Dataset switcher
+
+A **Sample / Large** toggle above the chart tabs lets you switch between the original 5×5 dataset and an expanded 12-investor × 10-resolution dataset with realistic institutional investor archetypes (ESG champions, sovereign wealth funds, mainstream asset managers, activist pensions). Both datasets are pre-computed at module level so switching is instant.
+
+The larger dataset demonstrates how all five chart views scale to real-world data volumes. One known limitation: the Agreements (chord) chart uses `@react-spring/web` internally for ribbon path animations, which has a compatibility issue with React 19. With 12 investors the chart produces 66 ribbon paths and hover interactions become noticeably slower. This is a known upstream issue; the 5-investor sample dataset performs normally.
+
 ### Technical decisions
 
 **Stack:** React 19, TypeScript, Vite, Nivo (charts), Framer Motion (transitions), SCSS Modules.

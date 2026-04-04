@@ -187,6 +187,8 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
     [isMobile, esgMap, showEsgTooltip, hideEsgTooltip],
   )
 
+  const investorCount = data[0]?.data.length ?? 0
+
   const axisLeftConfig = useMemo(
     () => ({
       tickSize: 0,
@@ -204,20 +206,21 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
       <div className={styles.header}>
         <h2 className={styles.title}>Investor Voting Heatmap</h2>
         <p className={styles.description}>
-          Every investor's exact position on every resolution, in a single view. Cell colour makes it
-          effortless to spot alignment clusters and outliers without requiring any interaction — built
-          for rapid pattern recognition across the portfolio.
+          Every investor's exact position on every resolution, in a single view.
+          Cell colour makes it effortless to spot alignment clusters and
+          outliers without requiring any interaction — built for rapid pattern
+          recognition across the portfolio.
         </p>
       </div>
       <div className={styles.body}>
         <div className={styles.chart} ref={chartRef}>
           <ResponsiveHeatMap
             data={data}
-            margin={getHeatmapMargin(isMobile)}
+            margin={getHeatmapMargin(isMobile, investorCount)}
             theme={nivoTheme}
             animate={false}
             layers={HEATMAP_LAYERS}
-            axisTop={getHeatmapAxisTop(isMobile)}
+            axisTop={getHeatmapAxisTop(isMobile, investorCount)}
             axisLeft={axisLeftConfig}
             axisBottom={null}
             axisRight={null}
