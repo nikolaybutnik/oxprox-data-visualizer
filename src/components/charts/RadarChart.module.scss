@@ -100,13 +100,17 @@
   position: relative;
   height: 300px;
 
-  [data-wide='true'] & {
-    min-width: 520px;
-    height: 480px;
-  }
-
   @include bp-md {
     height: 440px;
+  }
+
+  [data-wide='true'] & {
+    min-width: 520px;
+    height: 360px;
+
+    @include bp-md {
+      height: 540px;
+    }
   }
 }
 
