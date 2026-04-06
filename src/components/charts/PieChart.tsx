@@ -2,6 +2,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { ResponsivePie, type PieTooltipProps } from '@nivo/pie'
 import { nivoTheme } from '../../styles/nivoTheme'
 import { voteColors, voteLegendItems } from '../../styles/colors'
+import PortalTooltip from '../ui/PortalTooltip'
 import type { PieDatum } from '../../data/transforms'
 import useIsMobile from '../../hooks/useIsMobile'
 import Legend from '../ui/Legend'
@@ -20,14 +21,16 @@ function PieTooltip({
   const vote = datum.id
   const percentage = Math.round((datum.value / total) * 100)
   return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
-        {vote}
-      </p>
-      <p className={styles.tooltipCount}>
-        {datum.value} {datum.value === 1 ? 'vote' : 'votes'} ({percentage}%)
-      </p>
-    </div>
+    <PortalTooltip>
+      <div className={styles.tooltip}>
+        <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
+          {vote}
+        </p>
+        <p className={styles.tooltipCount}>
+          {datum.value} {datum.value === 1 ? 'vote' : 'votes'} ({percentage}%)
+        </p>
+      </div>
+    </PortalTooltip>
   )
 }
 

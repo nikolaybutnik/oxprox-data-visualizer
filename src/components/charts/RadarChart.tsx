@@ -18,6 +18,7 @@ import type { VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import { getRadarChartMargin } from './RadarChart.config'
 import ScrollFade from '../ui/ScrollFade'
+import PortalTooltip from '../ui/PortalTooltip'
 import styles from './RadarChart.module.scss'
 
 interface RadarChartProps {
@@ -74,24 +75,29 @@ const RADAR_LAYERS = [
 
 function RadarTooltip({ index, data }: RadarSliceTooltipProps) {
   return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipResolution}>{index}</p>
-      {data.map(({ id, color, value }) => {
-        const vote = VALUE_TO_VOTE[value]
-        return (
-          <p key={id} className={styles.tooltipRow}>
-            <span className={styles.tooltipDot} style={{ background: color }} />
-            <span className={styles.tooltipInvestor}>{id}</span>
-            <span
-              className={styles.tooltipVote}
-              style={{ color: voteColors[vote] }}
-            >
-              {vote}
-            </span>
-          </p>
-        )
-      })}
-    </div>
+    <PortalTooltip>
+      <div className={styles.tooltip}>
+        <p className={styles.tooltipResolution}>{index}</p>
+        {data.map(({ id, color, value }) => {
+          const vote = VALUE_TO_VOTE[value]
+          return (
+            <p key={id} className={styles.tooltipRow}>
+              <span
+                className={styles.tooltipDot}
+                style={{ background: color }}
+              />
+              <span className={styles.tooltipInvestor}>{id}</span>
+              <span
+                className={styles.tooltipVote}
+                style={{ color: voteColors[vote] }}
+              >
+                {vote}
+              </span>
+            </p>
+          )
+        })}
+      </div>
+    </PortalTooltip>
   )
 }
 

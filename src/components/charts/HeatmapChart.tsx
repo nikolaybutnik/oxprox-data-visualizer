@@ -4,7 +4,6 @@ import {
   type LayerId,
   type CustomLayer,
 } from '@nivo/heatmap'
-import { useTooltip } from '@nivo/tooltip'
 import { nivoTheme } from '../../styles/nivoTheme'
 import {
   colors,
@@ -18,6 +17,7 @@ import type { EsgCategory, VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import Legend from '../ui/Legend'
 import ScrollFade from '../ui/ScrollFade'
+import PortalTooltip from '../ui/PortalTooltip'
 import { getHeatmapMargin, getHeatmapAxisTop } from './HeatmapChart.config'
 import styles from './HeatmapChart.module.scss'
 
@@ -47,21 +47,26 @@ function HeatmapTooltipContent({
   vote: VoteValue
 }) {
   return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipResolution}>{serieId}</p>
-      <p className={styles.tooltipInvestor}>{investor}</p>
-      <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
-        {vote}
-      </p>
-    </div>
+    <PortalTooltip>
+      <div className={styles.tooltip}>
+        <p className={styles.tooltipResolution}>{serieId}</p>
+        <p className={styles.tooltipInvestor}>{investor}</p>
+        <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
+          {vote}
+        </p>
+      </div>
+    </PortalTooltip>
   )
 }
 
-// Cell layer — proper React component so useTooltip (a hook) is valid here.
-// Rendered inside Nivo's TooltipProvider, so showTooltipFromEvent works identically
-// to how ResponsiveBar uses it internally for its own tooltips.
+// Cell layer — renders cells as plain SVG with portal tooltips.
 function HeatmapCellLayer({ cells }: { cells: LayerCell[] }) {
-  const { showTooltipFromEvent, hideTooltip } = useTooltip()
+  const [active, setActive] = useState<{
+    serieId: string
+    investor: string
+    vote: VoteValue
+  } | null>(null)
+
   return (
     <g>
       {cells.map((cell) => {
@@ -77,20 +82,26 @@ function HeatmapCellLayer({ cells }: { cells: LayerCell[] }) {
             fill={voteColors[vote]}
             fillOpacity={0.9}
             style={{ cursor: 'pointer' }}
-            onMouseEnter={(e) =>
-              showTooltipFromEvent(
-                <HeatmapTooltipContent
-                  serieId={cell.serieId}
-                  investor={cell.data.x}
-                  vote={vote}
-                />,
-                e,
-              )
+            onMouseEnter={() =>
+              setActive({
+                serieId: cell.serieId,
+                investor: cell.data.x,
+                vote,
+              })
             }
-            onMouseLeave={hideTooltip}
+            onMouseLeave={() => setActive(null)}
           />
         )
       })}
+      {active && (
+        <foreignObject width={0} height={0} overflow='visible'>
+          <HeatmapTooltipContent
+            serieId={active.serieId}
+            investor={active.investor}
+            vote={active.vote}
+          />
+        </foreignObject>
+      )}
     </g>
   )
 }
@@ -165,9 +176,7 @@ function HeatmapChart({ data, esgMap, wide }: HeatmapChartProps) {
             <g
               transform={`translate(${isMobile ? -8 : -12}, 0)`}
               style={{ cursor: 'pointer' }}
-              onMouseEnter={(e) =>
-                showEsgTooltip(category, e.clientX, e.clientY)
-              }
+              onMouseEnter={() => setEsgTooltip({ x: 0, y: 0, category })}
               onMouseLeave={hideEsgTooltip}
             >
               <circle r={isMobile ? 6 : 8} fill={esgColors[category]} />
@@ -235,16 +244,15 @@ function HeatmapChart({ data, esgMap, wide }: HeatmapChartProps) {
             />
 
             {esgTooltip && (
-              <div
-                className={styles.esgTooltip}
-                style={{ left: esgTooltip.x, top: esgTooltip.y }}
-              >
-                <span
-                  className={styles.esgDot}
-                  style={{ background: esgColors[esgTooltip.category] }}
-                />
-                {esgLabels[esgTooltip.category]}
-              </div>
+              <PortalTooltip>
+                <div className={styles.esgTooltip}>
+                  <span
+                    className={styles.esgDot}
+                    style={{ background: esgColors[esgTooltip.category] }}
+                  />
+                  {esgLabels[esgTooltip.category]}
+                </div>
+              </PortalTooltip>
             )}
           </div>
           <div className={styles.legend}>

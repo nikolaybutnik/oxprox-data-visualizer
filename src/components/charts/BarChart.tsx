@@ -21,6 +21,7 @@ import {
 } from './BarChart.config'
 import Legend from '../ui/Legend'
 import ScrollFade from '../ui/ScrollFade'
+import PortalTooltip from '../ui/PortalTooltip'
 import styles from './BarChart.module.scss'
 
 interface BarChartProps {
@@ -47,19 +48,21 @@ function BarTooltip({ id, value, data, votersMap }: TooltipProps) {
   const total = Object.values(resolutionVoters).flat().length
 
   return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
-        {vote}
-      </p>
-      <p className={styles.tooltipCount}>
-        {value} of {total} investors
-      </p>
-      <ul className={styles.tooltipVoters}>
-        {voters.map((name) => (
-          <li key={name}>{name}</li>
-        ))}
-      </ul>
-    </div>
+    <PortalTooltip>
+      <div className={styles.tooltip}>
+        <p className={styles.tooltipVote} style={{ color: voteColors[vote] }}>
+          {vote}
+        </p>
+        <p className={styles.tooltipCount}>
+          {value} of {total} investors
+        </p>
+        <ul className={styles.tooltipVoters}>
+          {voters.map((name) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+      </div>
+    </PortalTooltip>
   )
 }
 
@@ -87,23 +90,14 @@ function BarChart({ data, votersMap, esgMap, wide }: BarChartProps) {
             if (!category) return null
 
             return (
-              <g key={resolution} transform={`translate(${cx}, -18)`}>
-                <circle
-                  r={10}
-                  fill={esgColors[category]}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={(e) => {
-                    if (!chartRef.current) return
-                    const rect = chartRef.current.getBoundingClientRect()
-                    const circleRect = e.currentTarget.getBoundingClientRect()
-                    setEsgTooltip({
-                      x: circleRect.left - rect.left + circleRect.width / 2,
-                      y: circleRect.top - rect.top,
-                      category,
-                    })
-                  }}
-                  onMouseLeave={hideEsgTooltip}
-                />
+              <g
+                key={resolution}
+                transform={`translate(${cx}, -18)`}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setEsgTooltip({ x: 0, y: 0, category })}
+                onMouseLeave={hideEsgTooltip}
+              >
+                <circle r={10} fill={esgColors[category]} />
                 <text
                   textAnchor='middle'
                   dominantBaseline='central'
@@ -181,16 +175,15 @@ function BarChart({ data, votersMap, esgMap, wide }: BarChartProps) {
             />
 
             {esgTooltip && (
-              <div
-                className={styles.esgTooltip}
-                style={{ left: esgTooltip.x, top: esgTooltip.y }}
-              >
-                <span
-                  className={styles.esgDot}
-                  style={{ background: esgColors[esgTooltip.category] }}
-                />
-                {esgLabels[esgTooltip.category]}
-              </div>
+              <PortalTooltip>
+                <div className={styles.esgTooltip}>
+                  <span
+                    className={styles.esgDot}
+                    style={{ background: esgColors[esgTooltip.category] }}
+                  />
+                  {esgLabels[esgTooltip.category]}
+                </div>
+              </PortalTooltip>
             )}
           </div>
           <div className={styles.legend}>

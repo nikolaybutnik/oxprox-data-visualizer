@@ -18,6 +18,7 @@ import {
 } from './ChordChart.config'
 import styles from './ChordChart.module.scss'
 import ScrollFade from '../ui/ScrollFade'
+import PortalTooltip from '../ui/PortalTooltip'
 
 interface ChordVariant {
   data: ChordData
@@ -46,12 +47,16 @@ const TABS: { value: EsgFilter; label: string; color: string }[] = [
 
 function ArcTooltip({ arc }: ArcTooltipComponentProps) {
   return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipLabel} style={{ color: arc.color }}>
-        {arc.label}
-      </p>
-      <p className={styles.tooltipCount}>{arc.value} agreements with others</p>
-    </div>
+    <PortalTooltip>
+      <div className={styles.tooltip}>
+        <p className={styles.tooltipLabel} style={{ color: arc.color }}>
+          {arc.label}
+        </p>
+        <p className={styles.tooltipCount}>
+          {arc.value} agreements with others
+        </p>
+      </div>
+    </PortalTooltip>
   )
 }
 
@@ -114,15 +119,17 @@ function ChordChart({ variants, wide }: ChordChartProps) {
       const count =
         activeMatrix[ribbon.source.index]?.[ribbon.target.index] ?? 0
       return (
-        <div className={styles.tooltip}>
-          <p className={styles.tooltipPair}>
-            {ribbon.source.id} · {ribbon.target.id}
-          </p>
-          <p className={styles.tooltipCount}>
-            Agreed on {count} of {resolutionCount} resolution
-            {resolutionCount !== 1 ? 's' : ''}
-          </p>
-        </div>
+        <PortalTooltip>
+          <div className={styles.tooltip}>
+            <p className={styles.tooltipPair}>
+              {ribbon.source.id} · {ribbon.target.id}
+            </p>
+            <p className={styles.tooltipCount}>
+              Agreed on {count} of {resolutionCount} resolution
+              {resolutionCount !== 1 ? 's' : ''}
+            </p>
+          </div>
+        </PortalTooltip>
       )
     },
     [activeMatrix, resolutionCount],

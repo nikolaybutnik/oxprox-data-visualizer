@@ -68,6 +68,7 @@
 .chart {
   position: relative;
   height: 380px;
+  overflow: visible;
 
   [data-wide='true'] & {
     min-width: 520px;
@@ -85,9 +86,6 @@
 }
 
 .esgTooltip {
-  position: absolute;
-  pointer-events: none;
-  transform: translate(-50%, calc(-100% - 8px));
   background: $color-white;
   border-radius: $border-radius-md;
   padding: $space-2 $space-3;

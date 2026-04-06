@@ -64,7 +64,9 @@ The larger dataset demonstrates how all five chart views scale to real-world dat
 
 **Performance:** Each chart is `React.lazy`-loaded and code-split so only the active chart's Nivo package is fetched. The bar chart (always shown first) is eagerly imported. The other four are prefetched in the background at module load time so tab switches feel instant.
 
-**Heatmap tooltips:** Nivo's `cellComponent` prop creates one React component instance per cell; all 25 re-render on every hover event. To avoid this, the heatmap uses a custom `layers` entry (`HeatmapCellLayer`) that renders cells as plain SVG and uses `useTooltip` from `@nivo/tooltip` — the same mechanism `ResponsiveBar` uses internally. This gives Nivo-standard tooltip behaviour without the 25-instance overhead.
+**Heatmap tooltips:** Nivo's `cellComponent` prop creates one React component instance per cell; all 25 re-render on every hover event. To avoid this, the heatmap uses a custom `layers` entry (`HeatmapCellLayer`) that renders cells as plain SVG with local state for tooltip visibility.
+
+**Portal tooltips:** On the large dataset, charts become horizontally scrollable on mobile. CSS forces `overflow-y: auto` whenever `overflow-x` is set, which clips any tooltip that extends beyond the chart container. To solve this, all chart tooltips render through a shared `PortalTooltip` component that portals to `document.body` with `position: fixed`. Mouse position is tracked at the module level so coordinates are available immediately on mount (no waiting for a `mousemove` event). The tooltip is rendered with `visibility: hidden` on its first frame while `useLayoutEffect` measures its dimensions, then made visible and centered above the cursor before the browser paints.
 
 **ESG indicators:** The bar chart and heatmap both render E / S / G category badges with hover tooltips. These use React `useState` (not imperative DOM) so they stay in sync across resize and re-render.
 
@@ -81,7 +83,7 @@ build/                — Custom Vite plugins (SCSS token extraction)
 src/
   components/
     charts/           — One .tsx + .config.ts + .module.scss per chart
-    ui/               — Header, Footer, Legend, ChartToggle, ScrollFade
+    ui/               — Header, Footer, Legend, ChartToggle, ScrollFade, PortalTooltip
   data/
     types.ts          — Domain types
     dataset.ts        — Hard-coded sample data
