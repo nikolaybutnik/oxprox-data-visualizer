@@ -1,3 +1,11 @@
+<div align="center" style="padding: 40px 0;">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/oxprox-logo-white.png" />
+    <source media="(prefers-color-scheme: light)" srcset="public/oxprox-logo.png" />
+    <img src="public/oxprox-logo.png" alt="OxProx logo" width="280" />
+  </picture>
+</div>
+
 # OxProx — Investor Voting Data Visualization
 
 An interactive data visualisation dashboard showing how five institutional investors voted across five ESG resolutions at a company shareholder meeting.
