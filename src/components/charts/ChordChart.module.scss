@@ -151,6 +151,7 @@
 .chart {
   position: relative;
   height: 360px;
+  -webkit-tap-highlight-color: transparent;
 
   @include bp-md {
     height: 440px;

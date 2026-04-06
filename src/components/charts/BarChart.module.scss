@@ -68,6 +68,7 @@
 .chart {
   position: relative;
   height: 380px;
+  -webkit-tap-highlight-color: transparent;
   overflow: visible;
 
   [data-wide='true'] & {
