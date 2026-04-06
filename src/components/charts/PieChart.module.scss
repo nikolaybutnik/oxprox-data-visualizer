@@ -7,6 +7,11 @@
 
   @include bp-md {
     max-width: 800px;
+    margin: 0 auto;
+
+    &[data-wide='true'] {
+      max-width: $max-width;
+    }
   }
 }
 

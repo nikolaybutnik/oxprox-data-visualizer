@@ -26,11 +26,11 @@ void import('../charts/RadarChart')
 void import('../charts/ChordChart')
 
 const CHARTS = [
-  { id: 'bar', label: 'Votes by Resolution' },
-  { id: 'heatmap', label: 'Voting Grid' },
-  { id: 'pie', label: 'Distribution' },
-  { id: 'radar', label: 'Profiles' },
-  { id: 'chord', label: 'Agreements' },
+  { id: 'bar', label: 'Resolution Consensus' },
+  { id: 'heatmap', label: 'Vote by Investor' },
+  { id: 'pie', label: 'Overall Sentiment' },
+  { id: 'radar', label: 'Voting Patterns' },
+  { id: 'chord', label: 'Investor Alignment' },
 ] as const
 
 type ChartId = (typeof CHARTS)[number]['id']
@@ -50,6 +50,7 @@ interface ChartToggleProps {
   radarData: RadarDatum[]
   radarKeys: string[]
   chordVariants: Record<'all' | EsgCategory, ChordVariant>
+  wide?: boolean
 }
 
 function ChevronLeft() {
@@ -89,6 +90,7 @@ function ChartToggle({
   radarData,
   radarKeys,
   chordVariants,
+  wide,
 }: ChartToggleProps) {
   const [activeTab, setActiveTab] = useState<ChartId>('bar')
 
@@ -184,16 +186,19 @@ function ChartToggle({
                   data={barData}
                   votersMap={votersMap}
                   esgMap={esgMap}
+                  wide={wide}
                 />
               )}
               {activeTab === 'heatmap' && (
-                <HeatmapChart data={heatmapData} esgMap={esgMap} />
+                <HeatmapChart data={heatmapData} esgMap={esgMap} wide={wide} />
               )}
-              {activeTab === 'pie' && <PieChart data={pieData} />}
+              {activeTab === 'pie' && <PieChart data={pieData} wide={wide} />}
               {activeTab === 'radar' && (
-                <RadarChart data={radarData} keys={radarKeys} />
+                <RadarChart data={radarData} keys={radarKeys} wide={wide} />
               )}
-              {activeTab === 'chord' && <ChordChart variants={chordVariants} />}
+              {activeTab === 'chord' && (
+                <ChordChart variants={chordVariants} wide={wide} />
+              )}
             </motion.div>
           </AnimatePresence>
         </Suspense>

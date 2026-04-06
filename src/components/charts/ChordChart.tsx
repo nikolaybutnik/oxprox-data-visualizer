@@ -10,8 +10,14 @@ import { investorColors, esgColors, colors } from '../../styles/colors'
 import type { ChordData } from '../../data/transforms'
 import type { EsgCategory } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
-import { getChordChartMargin } from './ChordChart.config'
+import {
+  getChordChartMargin,
+  getChordLabelOffset,
+  getChordInnerRadiusRatio,
+  getChordLabelFontSize,
+} from './ChordChart.config'
 import styles from './ChordChart.module.scss'
+import ScrollFade from '../ui/ScrollFade'
 
 interface ChordVariant {
   data: ChordData
@@ -26,6 +32,7 @@ interface ChordChartProps {
     S: ChordVariant
     G: ChordVariant
   }
+  wide?: boolean
 }
 
 type EsgFilter = 'all' | EsgCategory
@@ -48,10 +55,20 @@ function ArcTooltip({ arc }: ArcTooltipComponentProps) {
   )
 }
 
-function ChordChart({ variants }: ChordChartProps) {
+function ChordChart({ variants, wide }: ChordChartProps) {
   const isMobile = useIsMobile()
   const [filter, setFilter] = useState<EsgFilter>('all')
   const [disabled, setDisabled] = useState<Set<string>>(new Set())
+
+  const chordTheme = useMemo(
+    () => ({
+      ...nivoTheme,
+      labels: {
+        text: { ...nivoTheme.text, fontSize: getChordLabelFontSize(isMobile) },
+      },
+    }),
+    [isMobile],
+  )
 
   const { data, resolutionCount } = variants[filter]
   const { matrix, keys } = data
@@ -112,15 +129,15 @@ function ChordChart({ variants }: ChordChartProps) {
   )
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
         <h2 className={styles.title}>Investor Agreement</h2>
         <p className={styles.description}>
-          Ribbons connect investors who voted identically, making alignment
-          groups visible at a glance. Ribbon thickness reflects the strength of
-          agreement. Use the E / S / G filter to reveal whether investors align
-          on environmental topics but diverge on governance — a pattern
-          invisible in any tabular view.
+          Ribbons connect investors who voted the same way. The thicker the
+          ribbon, the more resolutions they agreed on. This makes it easy to
+          spot voting blocs and outliers. Use the E / S / G tabs to see whether
+          alignment holds across categories, and toggle individual investors to
+          focus on specific pairs.
         </p>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>ESG Category</span>
@@ -172,53 +189,56 @@ function ChordChart({ variants }: ChordChartProps) {
           </div>
         </div>
       </div>
-      <div className={styles.body}>
-        <div className={styles.chart}>
-          {!hasAgreements ? (
-            <div className={styles.empty}>
-              No shared votes for these filters
-            </div>
-          ) : (
-            <ResponsiveChord
-              key={`${filter}-${activeKeys.join(',')}`}
-              data={activeMatrix}
-              keys={activeKeys}
-              colors={({ id }) =>
-                investorColors[keys.indexOf(id as string)] ?? investorColors[0]
-              }
-              margin={getChordChartMargin(isMobile)}
-              padAngle={0.02}
-              innerRadiusRatio={0.82}
-              innerRadiusOffset={0.02}
-              arcOpacity={0.9}
-              activeArcOpacity={1}
-              inactiveArcOpacity={0.4}
-              arcBorderWidth={1}
-              arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-              ribbonOpacity={0.5}
-              activeRibbonOpacity={0.75}
-              inactiveRibbonOpacity={0.1}
-              enableLabel={true}
-              label={(arc) => (arc.value > 0 ? arc.id : '')}
-              labelOffset={12}
-              labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
-              theme={nivoTheme}
-              animate={false}
-              arcTooltip={ArcTooltip}
-              ribbonTooltip={ribbonTooltip}
-            />
-          )}
+      <ScrollFade enabled={wide}>
+        <div className={styles.body}>
+          <div className={styles.chart}>
+            {!hasAgreements ? (
+              <div className={styles.empty}>
+                No shared votes for these filters
+              </div>
+            ) : (
+              <ResponsiveChord
+                key={`${filter}-${activeKeys.join(',')}`}
+                data={activeMatrix}
+                keys={activeKeys}
+                colors={({ id }) =>
+                  investorColors[keys.indexOf(id as string)] ??
+                  investorColors[0]
+                }
+                margin={getChordChartMargin(isMobile)}
+                padAngle={0.02}
+                innerRadiusRatio={getChordInnerRadiusRatio(isMobile)}
+                innerRadiusOffset={0.02}
+                arcOpacity={0.9}
+                activeArcOpacity={1}
+                inactiveArcOpacity={0.4}
+                arcBorderWidth={1}
+                arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
+                ribbonOpacity={0.5}
+                activeRibbonOpacity={0.75}
+                inactiveRibbonOpacity={0.1}
+                enableLabel={true}
+                label={(arc) => (arc.value > 0 ? arc.id : '')}
+                labelOffset={getChordLabelOffset(isMobile)}
+                labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
+                theme={chordTheme}
+                animate={false}
+                arcTooltip={ArcTooltip}
+                ribbonTooltip={ribbonTooltip}
+              />
+            )}
+          </div>
+          <div className={styles.legend}>
+            <ul className={styles.resolutions}>
+              {variants[filter].resolutionLabels.map((label) => (
+                <li key={label} className={styles.resolutionItem}>
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className={styles.legend}>
-          <ul className={styles.resolutions}>
-            {variants[filter].resolutionLabels.map((label) => (
-              <li key={label} className={styles.resolutionItem}>
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      </ScrollFade>
     </div>
   )
 }

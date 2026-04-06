@@ -6,8 +6,8 @@ export function getHeatmapMargin(isMobile: boolean, investorCount: number) {
   const isLarge = investorCount > 5
   if (isMobile) {
     return isLarge
-      ? { top: 95, right: 8, bottom: 8, left: 90 }
-      : { top: 68, right: 12, bottom: 8, left: 80 }
+      ? { top: 95, right: 8, bottom: 8, left: 120 }
+      : { top: 68, right: 14, bottom: 8, left: 80 }
   }
   return isLarge
     ? { top: 95, right: 20, bottom: 20, left: 172 }

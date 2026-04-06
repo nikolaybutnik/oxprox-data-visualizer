@@ -89,7 +89,7 @@ function App() {
               </button>
             ))}
           </div>
-          <ChartToggle {...dataset} />
+          <ChartToggle {...dataset} wide={datasetId === 'large'} />
         </div>
       </main>
       <Footer />

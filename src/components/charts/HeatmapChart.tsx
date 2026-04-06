@@ -7,6 +7,7 @@ import {
 import { useTooltip } from '@nivo/tooltip'
 import { nivoTheme } from '../../styles/nivoTheme'
 import {
+  colors,
   voteColors,
   esgColors,
   esgLabels,
@@ -16,12 +17,14 @@ import type { HeatmapDatum, HeatmapCell } from '../../data/transforms'
 import type { EsgCategory, VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import Legend from '../ui/Legend'
+import ScrollFade from '../ui/ScrollFade'
 import { getHeatmapMargin, getHeatmapAxisTop } from './HeatmapChart.config'
 import styles from './HeatmapChart.module.scss'
 
 interface HeatmapChartProps {
   data: HeatmapDatum[]
   esgMap: Record<string, EsgCategory>
+  wide?: boolean
 }
 
 type LayerCell = {
@@ -106,7 +109,7 @@ interface EsgTooltipState {
   category: EsgCategory
 }
 
-function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
+function HeatmapChart({ data, esgMap, wide }: HeatmapChartProps) {
   const isMobile = useIsMobile()
   const chartRef = useRef<HTMLDivElement>(null)
   const [esgTooltip, setEsgTooltip] = useState<EsgTooltipState | null>(null)
@@ -140,9 +143,9 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
             textAnchor='end'
             dominantBaseline='central'
             style={{
-              fontFamily: "'IBM Plex Sans', sans-serif",
+              fontFamily: nivoTheme.text.fontFamily,
               fontSize: isMobile ? 10 : 11,
-              fill: '#66625E',
+              fill: colors.stone,
             }}
           >
             {hasTwoLines ? (
@@ -174,7 +177,7 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
                 fill='white'
                 fontSize={isMobile ? 7 : 9}
                 fontWeight={700}
-                fontFamily="'IBM Plex Sans', sans-serif"
+                fontFamily={nivoTheme.text.fontFamily}
                 style={{ pointerEvents: 'none' }}
               >
                 {category}
@@ -195,58 +198,60 @@ function HeatmapChart({ data, esgMap }: HeatmapChartProps) {
       tickPadding: 20,
       legend: 'Resolution',
       legendPosition: 'middle' as const,
-      legendOffset: isMobile ? -72 : -154,
+      legendOffset: isMobile ? (wide ? -100 : -72) : -154,
       renderTick: renderYTick,
     }),
-    [isMobile, renderYTick],
+    [isMobile, wide, renderYTick],
   )
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
         <h2 className={styles.title}>Investor Voting Heatmap</h2>
         <p className={styles.description}>
-          Every investor's exact position on every resolution, in a single view.
-          Cell colour makes it effortless to spot alignment clusters and
-          outliers without requiring any interaction — built for rapid pattern
-          recognition across the portfolio.
+          A full grid of every investor's vote on every resolution. The colour
+          of each cell shows the vote direction, so you can quickly scan for
+          patterns: who tends to agree, and who's the outlier. Hover any cell
+          for the full breakdown.
         </p>
       </div>
-      <div className={styles.body}>
-        <div className={styles.chart} ref={chartRef}>
-          <ResponsiveHeatMap
-            data={data}
-            margin={getHeatmapMargin(isMobile, investorCount)}
-            theme={nivoTheme}
-            animate={false}
-            layers={HEATMAP_LAYERS}
-            axisTop={getHeatmapAxisTop(isMobile, investorCount)}
-            axisLeft={axisLeftConfig}
-            axisBottom={null}
-            axisRight={null}
-            enableLabels={false}
-          />
+      <ScrollFade enabled={wide}>
+        <div className={styles.body}>
+          <div className={styles.chart} ref={chartRef}>
+            <ResponsiveHeatMap
+              data={data}
+              margin={getHeatmapMargin(isMobile, investorCount)}
+              theme={nivoTheme}
+              animate={false}
+              layers={HEATMAP_LAYERS}
+              axisTop={getHeatmapAxisTop(isMobile, investorCount)}
+              axisLeft={axisLeftConfig}
+              axisBottom={null}
+              axisRight={null}
+              enableLabels={false}
+            />
 
-          {esgTooltip && (
-            <div
-              className={styles.esgTooltip}
-              style={{ left: esgTooltip.x, top: esgTooltip.y }}
-            >
-              <span
-                className={styles.esgDot}
-                style={{ background: esgColors[esgTooltip.category] }}
-              />
-              {esgLabels[esgTooltip.category]}
-            </div>
-          )}
+            {esgTooltip && (
+              <div
+                className={styles.esgTooltip}
+                style={{ left: esgTooltip.x, top: esgTooltip.y }}
+              >
+                <span
+                  className={styles.esgDot}
+                  style={{ background: esgColors[esgTooltip.category] }}
+                />
+                {esgLabels[esgTooltip.category]}
+              </div>
+            )}
+          </div>
+          <div className={styles.legend}>
+            <Legend
+              items={voteLegendItems}
+              direction={isMobile ? 'row' : 'column'}
+            />
+          </div>
         </div>
-        <div className={styles.legend}>
-          <Legend
-            items={voteLegendItems}
-            direction={isMobile ? 'row' : 'column'}
-          />
-        </div>
-      </div>
+      </ScrollFade>
     </div>
   )
 }

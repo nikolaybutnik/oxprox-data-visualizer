@@ -1,0 +1,25 @@
+@use '../../styles/tokens' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.2s;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(to left, transparent, $color-offwhite);
+}
+
+.fadeRight {
+  right: 0;
+  background: linear-gradient(to right, transparent, $color-offwhite);
+}

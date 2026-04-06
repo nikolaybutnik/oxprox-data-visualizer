@@ -17,11 +17,13 @@ import type { RadarDatum } from '../../data/transforms'
 import type { VoteValue } from '../../data/types'
 import useIsMobile from '../../hooks/useIsMobile'
 import { getRadarChartMargin } from './RadarChart.config'
+import ScrollFade from '../ui/ScrollFade'
 import styles from './RadarChart.module.scss'
 
 interface RadarChartProps {
   data: RadarDatum[]
   keys: string[]
+  wide?: boolean
 }
 
 const VALUE_TO_VOTE: Record<number, VoteValue> = {
@@ -50,7 +52,7 @@ function GridRingLabels({
           y={centerY - radiusScale(value) + 4}
           fontSize={10}
           fontWeight={600}
-          fontFamily="'IBM Plex Sans', sans-serif"
+          fontFamily={nivoTheme.text.fontFamily}
           fill={color}
           textAnchor='start'
         >
@@ -93,7 +95,7 @@ function RadarTooltip({ index, data }: RadarSliceTooltipProps) {
   )
 }
 
-function RadarChart({ data, keys }: RadarChartProps) {
+function RadarChart({ data, keys, wide }: RadarChartProps) {
   const isMobile = useIsMobile()
 
   // Tracks which investors are hidden. Empty set = all visible (default).
@@ -133,14 +135,14 @@ function RadarChart({ data, keys }: RadarChartProps) {
   )
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
         <h2 className={styles.title}>Voting Profile by Investor</h2>
         <p className={styles.description}>
-          Each investor's polygon encodes their overall voting personality. A
-          large, regular shape signals consistent ESG alignment; a compact or
-          irregular shape reveals a more selective approach. Designed for peer
-          comparison and manager profiling.
+          Each polygon represents one investor's voting behaviour across all
+          resolutions. A large, regular shape suggests they consistently voted
+          For; a smaller or uneven shape means they were more selective. Use the
+          pills below to compare specific investors side by side.
         </p>
         <div className={styles.filters}>
           <button
@@ -168,32 +170,34 @@ function RadarChart({ data, keys }: RadarChartProps) {
           ))}
         </div>
       </div>
-      <div className={styles.body}>
-        <div className={styles.chart}>
-          <ResponsiveRadar
-            key={activeKeys.join(',')}
-            data={data}
-            keys={activeKeys}
-            indexBy='resolution'
-            maxValue={3}
-            colors={({ key }) =>
-              investorColors[keys.indexOf(key as string)] ?? investorColors[0]
-            }
-            fillOpacity={0.25}
-            borderWidth={3}
-            gridLevels={3}
-            gridShape='circular'
-            dotSize={8}
-            dotBorderWidth={2}
-            dotBorderColor={{ theme: 'background' }}
-            margin={getRadarChartMargin(isMobile)}
-            theme={nivoTheme}
-            animate={false}
-            layers={RADAR_LAYERS}
-            sliceTooltip={renderTooltip}
-          />
+      <ScrollFade enabled={wide}>
+        <div className={styles.body}>
+          <div className={styles.chart}>
+            <ResponsiveRadar
+              key={activeKeys.join(',')}
+              data={data}
+              keys={activeKeys}
+              indexBy='resolution'
+              maxValue={3}
+              colors={({ key }) =>
+                investorColors[keys.indexOf(key as string)] ?? investorColors[0]
+              }
+              fillOpacity={0.25}
+              borderWidth={3}
+              gridLevels={3}
+              gridShape='circular'
+              dotSize={8}
+              dotBorderWidth={2}
+              dotBorderColor={{ theme: 'background' }}
+              margin={getRadarChartMargin(isMobile)}
+              theme={nivoTheme}
+              animate={false}
+              layers={RADAR_LAYERS}
+              sliceTooltip={renderTooltip}
+            />
+          </div>
         </div>
-      </div>
+      </ScrollFade>
     </div>
   )
 }

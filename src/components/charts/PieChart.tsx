@@ -10,6 +10,7 @@ import styles from './PieChart.module.scss'
 
 interface PieChartProps {
   data: PieDatum[]
+  wide?: boolean
 }
 
 function PieTooltip({
@@ -30,7 +31,7 @@ function PieTooltip({
   )
 }
 
-function PieChart({ data }: PieChartProps) {
+function PieChart({ data, wide }: PieChartProps) {
   const isMobile = useIsMobile()
 
   const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data])
@@ -48,13 +49,14 @@ function PieChart({ data }: PieChartProps) {
   )
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
         <h2 className={styles.title}>Overall Vote Distribution</h2>
         <p className={styles.description}>
-          A high-level snapshot of the aggregate vote balance across all proposals. Useful for
-          governance reporting and strategy reviews — a portfolio heavily skewed toward Against may
-          indicate a systematic divergence worth raising with asset managers.
+          A top-level view of the overall For / Against / Abstain balance across
+          every proposal. If one slice dominates, sentiment is clear. If the
+          ring is fairly even, there's genuine disagreement in the portfolio.
+          Hover a slice to see the exact count and percentage.
         </p>
       </div>
       <div className={styles.body}>

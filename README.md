@@ -42,11 +42,11 @@ The spec asked for a single chart with tooltips and responsive layout. Rather th
 
 | Tab | Chart | What it answers |
 |-----|-------|-----------------|
-| Votes by Resolution | Stacked bar | How did the full group vote on each proposal? Were resolutions contested or unanimous? |
-| Voting Grid | Heatmap | Exactly which investor voted what on each resolution — the full matrix at a glance |
-| Distribution | Donut | What is the overall For / Against / Abstain split across all 25 votes? |
-| Profiles | Radar | What is each investor's overall voting personality? Consistent For? Mixed? Against-leaning? |
-| Agreements | Chord | Which investors tend to vote the same way as each other, and on which ESG category? |
+| Resolution Consensus | Stacked bar | How did the full group vote on each proposal? Were resolutions contested or unanimous? |
+| Vote by Investor | Heatmap | Exactly which investor voted what on each resolution, the full matrix at a glance |
+| Overall Sentiment | Donut | What is the overall For / Against / Abstain split across all votes? |
+| Voting Patterns | Radar | What is each investor's overall voting personality? Consistent For? Mixed? Against-leaning? |
+| Investor Alignment | Chord | Which investors tend to vote the same way as each other, and on which ESG category? |
 
 Both the chord and radar charts include per-investor toggle pills (defaulting to All) that show or hide individual investors. The chord diagram also has an **E / S / G / All** ESG filter; switching category resets the investor selection for a clean view of each topic. When the selected combination produces no shared votes, a "No shared votes for these filters" placeholder replaces the chart. Both controls use the investor's colour directly in the pill, eliminating the need for a separate legend.
 
@@ -54,7 +54,7 @@ Both the chord and radar charts include per-investor toggle pills (defaulting to
 
 A **Sample / Large** toggle above the chart tabs lets you switch between the original 5×5 dataset and an expanded 12-investor × 10-resolution dataset with realistic institutional investor archetypes (ESG champions, sovereign wealth funds, mainstream asset managers, activist pensions). Both datasets are pre-computed at module level so switching is instant.
 
-The larger dataset demonstrates how all five chart views scale to real-world data volumes. One known limitation: the Agreements (chord) chart uses `@react-spring/web` internally for ribbon path animations, which has a compatibility issue with React 19. With 12 investors the chart produces 66 ribbon paths and hover interactions become noticeably slower. This is a known upstream issue; the 5-investor sample dataset performs normally.
+The larger dataset demonstrates how all five chart views scale to real-world data volumes. Charts expand from 800px to the full 1200px container width on the large dataset, and on mobile the chart area becomes horizontally scrollable with edge fades that appear only when there is room to scroll. One known limitation: the Investor Alignment (chord) chart uses `@react-spring/web` internally for ribbon path animations, which has a compatibility issue with React 19. With 12 investors the chart produces 66 ribbon paths and hover interactions become noticeably slower. This is a known upstream issue; the 5-investor sample dataset performs normally.
 
 ### Technical decisions
 
@@ -81,7 +81,7 @@ build/                — Custom Vite plugins (SCSS token extraction)
 src/
   components/
     charts/           — One .tsx + .config.ts + .module.scss per chart
-    ui/               — Header, Footer, Legend, ChartToggle
+    ui/               — Header, Footer, Legend, ChartToggle, ScrollFade
   data/
     types.ts          — Domain types
     dataset.ts        — Hard-coded sample data

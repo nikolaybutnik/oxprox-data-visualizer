@@ -20,12 +20,14 @@ import {
   BAR_AXIS_LEFT,
 } from './BarChart.config'
 import Legend from '../ui/Legend'
+import ScrollFade from '../ui/ScrollFade'
 import styles from './BarChart.module.scss'
 
 interface BarChartProps {
   data: BarDatum[]
   votersMap: BarVotersMap
   esgMap: Record<string, EsgCategory>
+  wide?: boolean
 }
 
 interface TooltipProps extends BarTooltipProps<BarDatum> {
@@ -61,7 +63,7 @@ function BarTooltip({ id, value, data, votersMap }: TooltipProps) {
   )
 }
 
-function BarChart({ data, votersMap, esgMap }: BarChartProps) {
+function BarChart({ data, votersMap, esgMap, wide }: BarChartProps) {
   const isMobile = useIsMobile()
   const chartRef = useRef<HTMLDivElement>(null)
   const [esgTooltip, setEsgTooltip] = useState<EsgTooltipState | null>(null)
@@ -108,7 +110,7 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
                   fill='white'
                   fontSize={9}
                   fontWeight={700}
-                  fontFamily="'IBM Plex Sans', sans-serif"
+                  fontFamily={nivoTheme.text.fontFamily}
                   style={{ pointerEvents: 'none' }}
                 >
                   {category}
@@ -144,55 +146,58 @@ function BarChart({ data, votersMap, esgMap }: BarChartProps) {
   )
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
         <h2 className={styles.title}>Investor Votes by Resolution</h2>
         <p className={styles.description}>
-          Stacked bars make contested resolutions immediately visible — a split bar signals disagreement,
-          a uniform bar signals consensus. Portfolio managers can identify which proposals drew pushback
-          and prioritise engagement accordingly.
+          Each bar represents a single resolution, broken down by how investors
+          voted. When a bar is mostly one colour, the group was broadly aligned.
+          A split bar tells you the proposal was contested and worth a closer
+          look. Hover over any segment to see exactly who voted that way.
         </p>
       </div>
-      <div className={styles.body}>
-        <div className={styles.chart} ref={chartRef}>
-          <ResponsiveBar
-            data={data}
-            keys={['For', 'Against', 'Abstain']}
-            indexBy='resolution'
-            groupMode='stacked'
-            layout='vertical'
-            colors={({ id }) => voteColors[id as string]}
-            theme={nivoTheme}
-            margin={getBarChartMargin(isMobile)}
-            padding={0.35}
-            axisBottom={getBarAxisBottom(isMobile)}
-            axisLeft={BAR_AXIS_LEFT}
-            animate={false}
-            enableLabel={false}
-            tooltip={renderTooltip}
-            layers={layers}
-          />
+      <ScrollFade enabled={wide}>
+        <div className={styles.body}>
+          <div className={styles.chart} ref={chartRef}>
+            <ResponsiveBar
+              data={data}
+              keys={['For', 'Against', 'Abstain']}
+              indexBy='resolution'
+              groupMode='stacked'
+              layout='vertical'
+              colors={({ id }) => voteColors[id as string]}
+              theme={nivoTheme}
+              margin={getBarChartMargin(isMobile, wide)}
+              padding={0.35}
+              axisBottom={getBarAxisBottom(isMobile, wide)}
+              axisLeft={BAR_AXIS_LEFT}
+              animate={false}
+              enableLabel={false}
+              tooltip={renderTooltip}
+              layers={layers}
+            />
 
-          {esgTooltip && (
-            <div
-              className={styles.esgTooltip}
-              style={{ left: esgTooltip.x, top: esgTooltip.y }}
-            >
-              <span
-                className={styles.esgDot}
-                style={{ background: esgColors[esgTooltip.category] }}
-              />
-              {esgLabels[esgTooltip.category]}
-            </div>
-          )}
+            {esgTooltip && (
+              <div
+                className={styles.esgTooltip}
+                style={{ left: esgTooltip.x, top: esgTooltip.y }}
+              >
+                <span
+                  className={styles.esgDot}
+                  style={{ background: esgColors[esgTooltip.category] }}
+                />
+                {esgLabels[esgTooltip.category]}
+              </div>
+            )}
+          </div>
+          <div className={styles.legend}>
+            <Legend
+              items={voteLegendItems}
+              direction={isMobile ? 'row' : 'column'}
+            />
+          </div>
         </div>
-        <div className={styles.legend}>
-          <Legend
-            items={voteLegendItems}
-            direction={isMobile ? 'row' : 'column'}
-          />
-        </div>
-      </div>
+      </ScrollFade>
     </div>
   )
 }
