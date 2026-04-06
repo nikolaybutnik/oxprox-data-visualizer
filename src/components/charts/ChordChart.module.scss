@@ -150,14 +150,18 @@
 
 .chart {
   position: relative;
-  height: 340px;
-
-  [data-wide='true'] & {
-    min-width: 520px;
-  }
+  height: 360px;
 
   @include bp-md {
     height: 440px;
+  }
+
+  [data-wide='true'] & {
+    min-width: 520px;
+
+    @include bp-md {
+      height: 540px;
+    }
   }
 }
 

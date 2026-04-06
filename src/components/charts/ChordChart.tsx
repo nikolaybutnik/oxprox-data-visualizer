@@ -145,9 +145,11 @@ function ChordChart({ variants, wide }: ChordChartProps) {
         <p className={styles.description}>
           Ribbons connect investors who voted the same way. The thicker the
           ribbon, the more resolutions they agreed on. This makes it easy to
-          spot voting blocs and outliers. Use the E / S / G tabs to see whether
-          alignment holds across categories, and toggle individual investors to
-          focus on specific pairs.
+          spot voting blocs and outliers. Hover over a ribbon to see exactly
+          which pair it connects and how many votes they shared, or hover over
+          an arc on the outer ring to highlight one investor's connections. Use
+          the E / S / G tabs to see whether alignment holds across categories,
+          and toggle individual investors to focus on specific pairs.
         </p>
         <div className={styles.filterGroup}>
           <span className={styles.filterLabel}>ESG Category</span>
