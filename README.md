@@ -4,6 +4,8 @@ An interactive data visualisation dashboard showing how five institutional inves
 
 Built for OxProx to demonstrate how rich, interactive visualisations can make complex shareholder voting data intuitive, informative, and actionable.
 
+**Live demo:** [oxprox-data-visualizer.vercel.app](https://oxprox-data-visualizer.vercel.app)
+
 ---
 
 ## Running locally
