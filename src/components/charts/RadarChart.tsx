@@ -137,12 +137,16 @@ function RadarChart({ data, keys, wide }: RadarChartProps) {
   return (
     <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Voting Profile by Investor</h2>
+        <h2 className={styles.title}>
+          Investor Voting Profiles
+          <span className={styles.subtitle}>Across All Resolutions</span>
+        </h2>
         <p className={styles.description}>
           Each polygon represents one investor's voting behaviour across all
-          resolutions. A large, regular shape suggests they consistently voted
-          For; a smaller or uneven shape means they were more selective. Use the
-          pills below to compare specific investors side by side.
+          resolutions. A regular shape suggests consistent voting behaviour,
+          while an uneven shape means they were more selective. Hover over a
+          resolution spoke to see how each investor voted. Use the pills below
+          to compare specific investors side by side.
         </p>
         <div className={styles.filters}>
           <button

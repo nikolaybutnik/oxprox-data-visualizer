@@ -25,6 +25,15 @@
   }
 }
 
+.subtitle {
+  display: block;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  color: $color-stone;
+  margin-top: $space-1;
+}
+
 .header {
   display: flex;
   flex-direction: column;

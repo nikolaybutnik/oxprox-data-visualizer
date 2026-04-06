@@ -51,12 +51,15 @@ function PieChart({ data, wide }: PieChartProps) {
   return (
     <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Overall Vote Distribution</h2>
+        <h2 className={styles.title}>
+          Aggregate Voting Sentiment
+          <span className={styles.subtitle}>Across All Resolutions</span>
+        </h2>
         <p className={styles.description}>
           A top-level view of the overall For / Against / Abstain balance across
           every proposal. If one slice dominates, sentiment is clear. If the
           ring is fairly even, there's genuine disagreement in the portfolio.
-          Hover a slice to see the exact count and percentage.
+          Hover over a slice to see the exact count and percentage.
         </p>
       </div>
       <div className={styles.body}>

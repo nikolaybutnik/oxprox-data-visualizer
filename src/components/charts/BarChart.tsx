@@ -148,7 +148,10 @@ function BarChart({ data, votersMap, esgMap, wide }: BarChartProps) {
   return (
     <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Investor Votes by Resolution</h2>
+        <h2 className={styles.title}>
+          Investor Voting Outcomes
+          <span className={styles.subtitle}>By Resolution</span>
+        </h2>
         <p className={styles.description}>
           Each bar represents a single resolution, broken down by how investors
           voted. When a bar is mostly one colour, the group was broadly aligned.

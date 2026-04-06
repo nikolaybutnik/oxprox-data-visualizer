@@ -207,12 +207,15 @@ function HeatmapChart({ data, esgMap, wide }: HeatmapChartProps) {
   return (
     <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Investor Voting Heatmap</h2>
+        <h2 className={styles.title}>
+          Investor Voting Positions
+          <span className={styles.subtitle}>By Resolution</span>
+        </h2>
         <p className={styles.description}>
           A full grid of every investor's vote on every resolution. The colour
           of each cell shows the vote direction, so you can quickly scan for
-          patterns: who tends to agree, and who's the outlier. Hover any cell
-          for the full breakdown.
+          patterns: who tends to agree, and who's the outlier. Hover over any
+          cell for full details.
         </p>
       </div>
       <ScrollFade enabled={wide}>

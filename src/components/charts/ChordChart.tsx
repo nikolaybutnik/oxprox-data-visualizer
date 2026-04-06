@@ -131,7 +131,10 @@ function ChordChart({ variants, wide }: ChordChartProps) {
   return (
     <div className={styles.wrapper} data-wide={wide}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Investor Agreement</h2>
+        <h2 className={styles.title}>
+          Investor Voting Alignment
+          <span className={styles.subtitle}>By ESG Category</span>
+        </h2>
         <p className={styles.description}>
           Ribbons connect investors who voted the same way. The thicker the
           ribbon, the more resolutions they agreed on. This makes it easy to
