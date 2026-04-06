@@ -1,10 +1,12 @@
-<div align="center" style="padding: 60px 0;">
+<br><br>
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="public/oxprox-logo-white.png" />
     <source media="(prefers-color-scheme: light)" srcset="public/oxprox-logo.png" />
     <img src="public/oxprox-logo.png" alt="OxProx logo" width="280" />
   </picture>
-</div>
+</p>
+<br><br>
 
 # OxProx — Investor Voting Data Visualization
 
