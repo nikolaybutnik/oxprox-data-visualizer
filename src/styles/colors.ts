@@ -1,34 +1,15 @@
 // =============================================================================
-// Color Constants — mirrors _tokens.scss graph palette for use in TS/JS
-// (e.g. Nivo chart props that require plain string values)
+// Color Constants — derived from _tokens.scss via virtual:scss-tokens
+// (single source of truth lives in SCSS; this file re-exports for TS/JS)
 // =============================================================================
 
-export const colors = {
-  navy: '#0E2043',
-  blue: '#527CEE',
-  blueLight: '#8ABCFF',
-  bluePale: '#E1EFFF',
-  stone: '#66625E',
-  sand: '#E8E4E1',
-  offwhite: '#F2F1EF',
-  white: '#FFFFFF',
-  orange: '#FF6948',
-} as const
+import {
+  colors as _colors,
+  graphColors as _graphColors,
+} from 'virtual:scss-tokens'
 
-export const graphColors = {
-  navy: '#0E2043',
-  blue: '#527CEE',
-  blueLight: '#8ABCFF',
-  tealDark: '#597B79',
-  teal: '#25C3B2',
-  olive: '#989A37',
-  lime: '#B8D12C',
-  orange: '#FF6948',
-  yellow: '#E6AC12',
-  crimson: '#9D013D',
-  pink: '#D7559E',
-  lavender: '#D699F9',
-} as const
+export const colors = _colors
+export const graphColors = _graphColors
 
 export const voteColors: Record<string, string> = {
   For: graphColors.teal,
