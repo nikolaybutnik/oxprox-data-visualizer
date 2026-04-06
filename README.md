@@ -1,4 +1,4 @@
-<div align="center" style="padding: 40px 0;">
+<div align="center" style="padding: 60px 0;">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="public/oxprox-logo-white.png" />
     <source media="(prefers-color-scheme: light)" srcset="public/oxprox-logo.png" />
