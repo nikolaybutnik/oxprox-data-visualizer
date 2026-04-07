@@ -35,7 +35,7 @@ Separate modules make it straightforward to update or fix one parser without ris
 ## Resilience When Sources Fail or Change Format
 
 - Failed sources are quarantined (raw file + error context saved) while the pipeline continues with the remaining sources.
-- Transient network or write issues receive up to 3 retries with exponential backoff.
+- Transient network or write issues are retried with exponential backoff.
 - Format changes are detected by comparing column names and row counts against the previous successful run. Significant drift automatically flags the run for manual review.
 - Records use a composite key (fund + company identifier + meeting date + resolution) for idempotent upserts to prevent duplicates.
 
@@ -43,13 +43,15 @@ Separate modules make it straightforward to update or fix one parser without ris
 
 A strict target schema (defined with Pydantic or equivalent) enforces structure. Non-critical fields default to `None` or sensible placeholders (e.g. unknown ESG category => “Uncategorised”). Vote strings are normalised via mapping tables.
 
-Records missing critical fields (company identifier or vote decision) are routed to a quarantine table rather than failing the entire run. Basic quality gates check that record count stays within ±20% of historical average as an early warning of anomalies.
+Records missing critical fields (company identifier or vote decision) are routed to a quarantine table rather than failing the entire run. Basic quality gates check that record count stays within a configurable tolerance of the historical average as an early warning of anomalies.
 
 ## Scheduling and Monitoring
 
 Prefect is a good tool choice for orchestration due to its strong observability and retry capabilities (a lightweight cron-based Python script is a viable minimal alternative).
 
-The pipeline runs automatically on the first business day of each quarter, with manual trigger support. Structured logging captures key metrics, and alerts (Slack/email) fire on failures or when >10% of records are quarantined. This ensures problems are caught quickly before they impact the public database or client reports.
+The pipeline runs automatically on the first business day of each quarter, with manual trigger support. Structured logging captures key metrics, and alerts (Slack/email) fire on failures or when quarantine rates exceed the configured threshold. This ensures problems are caught quickly before they impact the public database or client reports.
+
+Business-specific parameters like schedule frequency, retry counts, drift thresholds, alert channels, and source column mappings, are externalised into a configuration profile. This keeps the pipeline engine generic and lets rules be adjusted (or varied per client) without code changes.
 
 A minimal working demo demonstrating the three parsers, normalisation, validation, and quarantine logic is included in the `pipeline_demo/` folder. Run it locally with:
 
@@ -58,5 +60,8 @@ cd pipeline_demo
 pip install -r requirements.txt
 python run_demo.py
 ```
+
+Or run in cloud at
+[PythonFiddle](https://python-fiddle.com/saved/42f101da-a31d-4851-aec9-0e440f9bd582)
 
 This design balances reliability, maintainability, and operational simplicity for a small team.
