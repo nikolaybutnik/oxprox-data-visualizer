@@ -80,7 +80,7 @@ The larger dataset demonstrates how all five chart views scale to real-world dat
 
 **ESG indicators:** The bar chart and heatmap both render E / S / G category badges with hover tooltips. These use React `useState` (not imperative DOM) so they stay in sync across resize and re-render.
 
-**Design tokens:** Colour values are defined once in `_tokens.scss` and extracted at build time by a custom Vite plugin (`build/vite-plugin-scss-tokens.ts`). The plugin compiles the SCSS, scrapes the `$color-*` and `$graph-*` variables, and serves them as a virtual module (`virtual:scss-tokens`) that `colors.ts` imports. This avoids duplicating hex values between SCSS and the JS/TS layer (Nivo requires plain strings for chart colours).
+**Design tokens:** Colour values are defined once in `_tokens.scss` and extracted at build time by a custom Vite plugin (`build/vite-plugin-scss-tokens.ts`). The plugin compiles the SCSS, scrapes the `$color-*`, `$graph-*`, `$shadow-*`, and `$overlay-*` variables, and serves them as a virtual module (`virtual:scss-tokens`) that `colors.ts` imports. This avoids duplicating values between SCSS and the JS/TS layer (Nivo requires plain strings for chart colours).
 
 **Responsive:** Mobile-first SCSS with a single `768px` breakpoint. Charts use CSS Grid (`1fr auto`) for the legend column — not flexbox — because Nivo's `ResizeObserver` measures the container before flex layout resolves, which would produce a 0px width and a blank chart.
 

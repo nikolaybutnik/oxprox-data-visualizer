@@ -11,9 +11,9 @@ const VIRTUAL_ID = 'virtual:scss-tokens'
 const RESOLVED_ID = '\0' + VIRTUAL_ID
 
 /**
- * Parses _tokens.scss and extracts all `$color-*` and `$graph-*` variables
- * by compiling a small SCSS snippet that outputs their values as CSS custom
- * properties, then scraping the compiled CSS.
+ * Parses _tokens.scss and extracts all `$color-*`, `$graph-*`, `$shadow-*`,
+ * and `$overlay-*` variables by compiling a small SCSS snippet that outputs
+ * their values as CSS custom properties, then scraping the compiled CSS.
  */
 function extractTokens(
   tokensPath: string,
@@ -21,7 +21,7 @@ function extractTokens(
   const source = readFileSync(tokensPath, 'utf-8')
 
   // Collect variable names matching our prefixes
-  const varRegex = /^\$(color|graph)-([a-z][-a-z]*)\s*:/gm
+  const varRegex = /^\$(color|graph|shadow|overlay)-([a-z][-a-z0-9]*)\s*:/gm
   const vars: { prefix: string; scssName: string; suffix: string }[] = []
   let match: RegExpExecArray | null
 
@@ -47,19 +47,26 @@ function extractTokens(
   // Parse the compiled CSS to extract values
   const colors: Record<string, string> = {}
   const graphColors: Record<string, string> = {}
+  const shadows: Record<string, string> = {}
+  const overlays: Record<string, string> = {}
 
-  const propRegex = /--_extract-(color|graph)-([a-z][-a-z]*):\s*([^;]+);/g
+  const propRegex =
+    /--_extract-(color|graph|shadow|overlay)-([a-z][-a-z0-9]*):\s*([^;]+);/g
   while ((match = propRegex.exec(result.css)) !== null) {
     const [, prefix, suffix, value] = match
     const camelKey = suffix.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
     if (prefix === 'color') {
       colors[camelKey] = value.trim()
-    } else {
+    } else if (prefix === 'graph') {
       graphColors[camelKey] = value.trim()
+    } else if (prefix === 'shadow') {
+      shadows[camelKey] = value.trim()
+    } else {
+      overlays[camelKey] = value.trim()
     }
   }
 
-  return { colors, graphColors }
+  return { colors, graphColors, shadows, overlays }
 }
 
 export default function scssTokensPlugin(): Plugin {
@@ -79,11 +86,14 @@ export default function scssTokensPlugin(): Plugin {
     load(id) {
       if (id !== RESOLVED_ID) return
 
-      const { colors, graphColors } = extractTokens(tokensPath)
+      const { colors, graphColors, shadows, overlays } =
+        extractTokens(tokensPath)
 
       return [
         `export const colors = ${JSON.stringify(colors)};`,
         `export const graphColors = ${JSON.stringify(graphColors)};`,
+        `export const shadows = ${JSON.stringify(shadows)};`,
+        `export const overlays = ${JSON.stringify(overlays)};`,
       ].join('\n')
     },
 

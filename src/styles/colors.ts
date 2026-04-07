@@ -6,10 +6,14 @@
 import {
   colors as _colors,
   graphColors as _graphColors,
+  shadows as _shadows,
+  overlays as _overlays,
 } from 'virtual:scss-tokens'
 
 export const colors = _colors
 export const graphColors = _graphColors
+export const shadows = _shadows
+export const overlays = _overlays
 
 export const voteColors: Record<string, string> = {
   For: graphColors.teal,

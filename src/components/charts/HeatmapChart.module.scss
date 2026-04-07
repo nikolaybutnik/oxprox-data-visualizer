@@ -89,7 +89,7 @@
   background: $color-white;
   border-radius: $border-radius-md;
   padding: $space-2 $space-3;
-  box-shadow: 0 4px 12px rgba(14, 32, 67, 0.12);
+  box-shadow: $shadow-tooltip;
   font-family: $font-body;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
@@ -111,7 +111,7 @@
   background: $color-white;
   border-radius: $border-radius-md;
   padding: $space-3 $space-4;
-  box-shadow: 0 4px 12px rgba(14, 32, 67, 0.12);
+  box-shadow: $shadow-tooltip;
   min-width: 160px;
 }
 

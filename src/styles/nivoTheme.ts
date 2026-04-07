@@ -2,7 +2,7 @@
 // Nivo Theme — shared chart theme applied across all chart components
 // =============================================================================
 
-import { colors } from './colors'
+import { colors, shadows } from './colors'
 
 export const nivoTheme = {
   text: {
@@ -41,7 +41,7 @@ export const nivoTheme = {
       background: colors.white,
       color: colors.navy,
       borderRadius: 8,
-      boxShadow: '0 4px 12px rgba(14, 32, 67, 0.12)',
+      boxShadow: shadows.tooltip,
       padding: '10px 14px',
     },
   },
