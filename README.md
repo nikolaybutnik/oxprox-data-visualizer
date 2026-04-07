@@ -10,9 +10,9 @@
 
 # OxProx — Investor Voting Data Visualization
 
-An interactive data visualisation dashboard showing how five institutional investors voted across five ESG resolutions at a company shareholder meeting.
+An interactive data visualization dashboard showing how five institutional investors voted across five ESG resolutions at a company shareholder meeting.
 
-Built for OxProx to demonstrate how rich, interactive visualisations can make complex shareholder voting data intuitive, informative, and actionable.
+Built for OxProx to demonstrate how rich, interactive visualizations can make complex shareholder voting data intuitive, informative, and actionable.
 
 **Live demo:** [oxprox-data-visualizer.vercel.app](https://oxprox-data-visualizer.vercel.app)
 
@@ -58,7 +58,7 @@ The spec asked for a single chart with tooltips and responsive layout. Rather th
 | Voting Patterns | Radar | What is each investor's overall voting personality? Consistent For? Mixed? Against-leaning? |
 | Investor Alignment | Chord | Which investors tend to vote the same way as each other, and on which ESG category? |
 
-Both the chord and radar charts include per-investor toggle pills (defaulting to All) that show or hide individual investors. The chord diagram also has an **E / S / G / All** ESG filter; switching category resets the investor selection for a clean view of each topic. When the selected combination produces no shared votes, a "No shared votes for these filters" placeholder replaces the chart. Both controls use the investor's colour directly in the pill, eliminating the need for a separate legend.
+Both the chord and radar charts include per-investor toggle pills (defaulting to All) that show or hide individual investors. The chord diagram also has an **E / S / G / All** ESG filter; switching category resets the investor selection for a clean view of each topic. When the selected combination produces no shared votes, a "No shared votes for these filters" placeholder replaces the chart. Both controls use the investor's color directly in the pill, eliminating the need for a separate legend.
 
 ### Dataset switcher
 
@@ -80,7 +80,7 @@ The larger dataset demonstrates how all five chart views scale to real-world dat
 
 **ESG indicators:** The bar chart and heatmap both render E / S / G category badges with hover tooltips. These use React `useState` (not imperative DOM) so they stay in sync across resize and re-render.
 
-**Design tokens:** Colour values are defined once in `_tokens.scss` and extracted at build time by a custom Vite plugin (`build/vite-plugin-scss-tokens.ts`). The plugin compiles the SCSS, scrapes the `$color-*`, `$graph-*`, `$shadow-*`, and `$overlay-*` variables, and serves them as a virtual module (`virtual:scss-tokens`) that `colors.ts` imports. This avoids duplicating values between SCSS and the JS/TS layer (Nivo requires plain strings for chart colours).
+**Design tokens:** Color values are defined once in `_tokens.scss` and extracted at build time by a custom Vite plugin (`build/vite-plugin-scss-tokens.ts`). The plugin compiles the SCSS, scrapes the `$color-*`, `$graph-*`, `$shadow-*`, and `$overlay-*` variables, and serves them as a virtual module (`virtual:scss-tokens`) that `colors.ts` imports. This avoids duplicating values between SCSS and the JS/TS layer (Nivo requires plain strings for chart colors).
 
 **Responsive:** Mobile-first SCSS with a single `768px` breakpoint. Charts use CSS Grid (`1fr auto`) for the legend column — not flexbox — because Nivo's `ResizeObserver` measures the container before flex layout resolves, which would produce a 0px width and a blank chart.
 

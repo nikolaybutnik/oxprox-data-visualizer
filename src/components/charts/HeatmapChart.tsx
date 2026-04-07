@@ -221,8 +221,8 @@ function HeatmapChart({ data, esgMap, wide }: HeatmapChartProps) {
           <span className={styles.subtitle}>By Resolution</span>
         </h2>
         <p className={styles.description}>
-          A full grid of every investor's vote on every resolution. The colour
-          of each cell shows the vote direction, so you can quickly scan for
+          A full grid of every investor's vote on every resolution. The color of
+          each cell shows the vote direction, so you can quickly scan for
           patterns: who tends to agree, and who's the outlier. Hover over any
           cell for full details.
         </p>

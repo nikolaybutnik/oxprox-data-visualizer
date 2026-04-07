@@ -148,7 +148,7 @@ function BarChart({ data, votersMap, esgMap, wide }: BarChartProps) {
         </h2>
         <p className={styles.description}>
           Each bar represents a single resolution, broken down by how investors
-          voted. When a bar is mostly one colour, the group was broadly aligned.
+          voted. When a bar is mostly one color, the group was broadly aligned.
           A split bar tells you the proposal was contested and worth a closer
           look. Hover over any segment to see exactly who voted that way.
         </p>

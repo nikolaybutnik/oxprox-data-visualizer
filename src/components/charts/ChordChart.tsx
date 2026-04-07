@@ -84,7 +84,7 @@ function ChordChart({ variants, wide }: ChordChartProps) {
     setDisabled(new Set())
   }, [filter, investorSignature])
 
-  // Derive filtered matrix and keys, preserving original indices for colour lookup
+  // Derive filtered matrix and keys, preserving original indices for color lookup
   const { activeKeys, activeMatrix } = useMemo(() => {
     const idx = keys
       .map((k, i) => ({ k, i }))

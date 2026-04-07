@@ -3,7 +3,7 @@
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// Core Colour Palette
+// Core Color Palette
 // -----------------------------------------------------------------------------
 $color-navy: #0e2043;
 $color-blue: #527cee;
@@ -19,7 +19,7 @@ $color-orange: #ff6948; // accent — use sparingly
 $gradient-brand: linear-gradient(180deg, #0e2043 0%, #527cee 100%);
 
 // -----------------------------------------------------------------------------
-// Graph Colour Palette
+// Graph Color Palette
 // -----------------------------------------------------------------------------
 $graph-navy: #0e2043;
 $graph-blue: #527cee;
@@ -34,7 +34,7 @@ $graph-crimson: #9d013d;
 $graph-pink: #d7559e;
 $graph-lavender: #d699f9;
 
-// Semantic vote colours (derived from graph palette)
+// Semantic vote colors (derived from graph palette)
 $vote-for: $graph-teal;
 $vote-against: $graph-orange;
 $vote-abstain: $graph-blue-light;
