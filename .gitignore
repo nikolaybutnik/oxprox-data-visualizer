@@ -9,6 +9,8 @@ lerna-debug.log*
 
 context
 CLAUDE.md
+__pycache__
+*.pyc
 node_modules
 dist
 dist-ssr
