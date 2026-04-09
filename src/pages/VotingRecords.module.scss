@@ -652,6 +652,7 @@ $sidebar-bg: linear-gradient(
 .table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-family: $font-body;
   font-size: $font-size-xs;
   min-width: 1200px;
@@ -674,6 +675,16 @@ $sidebar-bg: linear-gradient(
     text-transform: uppercase;
     letter-spacing: 0.6px;
     user-select: none;
+    position: relative;
+  }
+
+  th.sortableHeader {
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: $color-navy;
+    }
   }
 
   td {
@@ -751,6 +762,57 @@ $sidebar-bg: linear-gradient(
 
 .expandIconOpen {
   transform: rotate(180deg);
+}
+
+// Sort indicators
+.headerContent {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.sortIcon {
+  display: inline-flex;
+  color: rgba($color-stone, 0.3);
+  transition: color 0.15s ease;
+
+  th:hover & {
+    color: rgba($color-stone, 0.6);
+  }
+}
+
+.sortIconActive {
+  display: inline-flex;
+  color: $color-blue;
+}
+
+// Column resize handle
+.resizeHandle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  background: transparent;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    bottom: 25%;
+    left: 2px;
+    width: 2px;
+    border-radius: 1px;
+    background: rgba($color-stone, 0.15);
+    transition: background-color 0.15s ease;
+  }
+
+  &:hover::after {
+    background: $color-blue;
+  }
 }
 
 .expandedRow {
