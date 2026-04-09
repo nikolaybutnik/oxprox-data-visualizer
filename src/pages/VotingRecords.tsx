@@ -22,6 +22,7 @@ import {
   LuSave,
   LuBookmark,
   LuX,
+  LuLogIn,
   LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
@@ -359,6 +360,12 @@ function Sidebar({
             </Link>
           ))}
         </nav>
+        <div className={styles.sidebarFooter}>
+          <button className={styles.sidebarLoginBtn}>
+            <LuLogIn size={16} />
+            <span>Log In</span>
+          </button>
+        </div>
       </aside>
     </>
   )
@@ -528,8 +535,8 @@ function VotingRecords() {
       />
 
       <div className={styles.pageContent}>
-        {/* Top bar */}
-        <header className={styles.topBar}>
+        {/* Page header — single bar with title, info, and tabs */}
+        <header className={styles.pageHeader}>
           <button
             className={styles.hamburger}
             onClick={() => setSidebarCollapsed(false)}
@@ -539,21 +546,8 @@ function VotingRecords() {
             <span />
             <span />
           </button>
-          <div className={styles.topBarRight}>
-            <button className={styles.topBarBtn}>Log In</button>
-            <Link
-              to='/'
-              className={`${styles.topBarBtn} ${styles.topBarBtnOutline}`}
-            >
-              Dashboard
-            </Link>
-          </div>
-        </header>
-
-        {/* Sub-header */}
-        <div className={styles.subHeader}>
-          <div className={styles.subHeaderLeft}>
-            <h1 className={styles.subHeaderTitle}>VOTING RECORDS</h1>
+          <div className={styles.pageHeaderLeft}>
+            <h1 className={styles.pageHeaderTitle}>VOTING RECORDS</h1>
             <InfoTooltip />
           </div>
           <div className={styles.tabGroup} role='tablist'>
@@ -569,7 +563,7 @@ function VotingRecords() {
               </button>
             ))}
           </div>
-        </div>
+        </header>
 
         {/* Primary filters */}
         <div className={styles.primaryFilters}>

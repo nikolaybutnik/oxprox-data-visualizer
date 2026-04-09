@@ -116,7 +116,60 @@ $bp-xl: 1280px;
 // -----------------------------------------------------------------------------
 $shadow-color: rgba($color-navy, 0.12);
 $shadow-tooltip: 0 4px 12px $shadow-color;
+$shadow-popover:
+  0 12px 40px rgba($color-navy, 0.18),
+  0 2px 8px rgba($color-navy, 0.08);
+$shadow-card: 0 1px 3px rgba($color-navy, 0.12);
+$shadow-sidebar: 2px 0 12px rgba($color-navy, 0.15);
+
+$overlay-black-50: rgba(0, 0, 0, 0.5);
 $overlay-white-60: rgba($color-white, 0.6);
+
+// White-on-dark overlays (for navy backgrounds)
+$white-04: rgba($color-white, 0.04);
+$white-06: rgba($color-white, 0.06);
+$white-08: rgba($color-white, 0.08);
+$white-12: rgba($color-white, 0.12);
+$white-15: rgba($color-white, 0.15);
+$white-25: rgba($color-white, 0.25);
+$white-40: rgba($color-white, 0.4);
+$white-55: rgba($color-white, 0.55);
+$white-60: rgba($color-white, 0.6);
+$white-80: rgba($color-white, 0.8);
+$white-85: rgba($color-white, 0.85);
+$white-90: rgba($color-white, 0.9);
+
+// Semantic color alphas (for tints, focus rings, hover states)
+$blue-03: rgba($color-blue, 0.03);
+$blue-04: rgba($color-blue, 0.04);
+$blue-06: rgba($color-blue, 0.06);
+$blue-08: rgba($color-blue, 0.08);
+$blue-10: rgba($color-blue, 0.1);
+$blue-15: rgba($color-blue, 0.15);
+$blue-25: rgba($color-blue, 0.25);
+
+$stone-15: rgba($color-stone, 0.15);
+$stone-20: rgba($color-stone, 0.2);
+$stone-30: rgba($color-stone, 0.3);
+$stone-35: rgba($color-stone, 0.35);
+$stone-60: rgba($color-stone, 0.6);
+
+$sand-50: rgba($color-sand, 0.5);
+
+$blue-pale-08: rgba($color-blue-pale, 0.08);
+$blue-pale-20: rgba($color-blue-pale, 0.2);
+$offwhite-50: rgba($color-offwhite, 0.5);
+
+// Chip semantic colors (derived from graph palette)
+$chip-success: $graph-teal;
+$chip-error: $graph-orange;
+$chip-warning: $graph-yellow;
+$chip-info: $color-blue;
+$chip-secondary: $graph-pink;
+
+// Derived interactive states
+$sand-hover: darken($color-sand, 8%);
+$blue-hover: darken($color-blue, 6%);
 
 // -----------------------------------------------------------------------------
 // Layout

@@ -15,11 +15,6 @@
 // =============================================================================
 
 $sidebar-width: 240px;
-$sidebar-bg: linear-gradient(
-  180deg,
-  darken($color-navy, 3%) 0%,
-  $color-navy 100%
-);
 
 .sidebar {
   position: fixed;
@@ -27,12 +22,13 @@ $sidebar-bg: linear-gradient(
   left: 0;
   bottom: 0;
   width: $sidebar-width;
-  background: $sidebar-bg;
+  background: $color-navy;
   display: flex;
   flex-direction: column;
   z-index: 100;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+  box-shadow: $shadow-sidebar;
+  border-right: 1px solid $white-08;
 
   @media (max-width: 999px) {
     transform: translateX(0);
@@ -48,7 +44,7 @@ $sidebar-bg: linear-gradient(
 .sidebarOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: $overlay-black-50;
   z-index: 99;
   backdrop-filter: blur(2px);
 
@@ -61,8 +57,9 @@ $sidebar-bg: linear-gradient(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $space-7 $space-6;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 72px;
+  padding: 0 $space-6;
+  border-bottom: 1px solid $white-08;
 }
 
 .sidebarLogo {
@@ -79,7 +76,7 @@ $sidebar-bg: linear-gradient(
   display: none;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: $white-55;
   cursor: pointer;
   padding: $space-1;
   border-radius: $border-radius-sm;
@@ -109,20 +106,20 @@ $sidebar-bg: linear-gradient(
   font-family: $font-body;
   font-size: $font-size-sm;
   font-weight: $font-weight-regular;
-  color: rgba(255, 255, 255, 0.55);
+  color: $white-55;
   text-decoration: none;
   transition: all 0.15s ease;
   border-left: 3px solid transparent;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.9);
-    background-color: rgba(255, 255, 255, 0.04);
+    color: $white-90;
+    background-color: $white-04;
   }
 
   &[data-active='true'] {
     color: $color-white;
     font-weight: $font-weight-medium;
-    background-color: rgba($color-blue, 0.15);
+    background-color: $blue-15;
     border-left-color: $color-blue;
   }
 }
@@ -137,6 +134,35 @@ $sidebar-bg: linear-gradient(
 
   [data-active='true'] & {
     opacity: 1;
+  }
+}
+
+.sidebarFooter {
+  margin-top: auto;
+  padding: $space-4 $space-5;
+  border-top: 1px solid $white-08;
+}
+
+.sidebarLoginBtn {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3 $space-4;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $white-55;
+  background: none;
+  border: 1px solid $white-12;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: $color-white;
+    border-color: $white-25;
+    background: $white-04;
   }
 }
 
@@ -157,18 +183,17 @@ $sidebar-bg: linear-gradient(
 }
 
 // =============================================================================
-// Top Bar
+// Page Header
 // =============================================================================
 
-.topBar {
+.pageHeader {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: $space-3 $space-6;
-  background: $color-white;
-  border-bottom: 1px solid $color-sand;
-  min-height: 52px;
-  gap: $space-3;
+  min-height: 72px;
+  padding: 0 $space-6;
+  background: $color-navy;
+  gap: $space-4;
+  flex-wrap: wrap;
 }
 
 .hamburger {
@@ -179,19 +204,19 @@ $sidebar-bg: linear-gradient(
   border: none;
   cursor: pointer;
   padding: $space-2;
-  margin-right: auto;
+  flex-shrink: 0;
 
   span {
     display: block;
     width: 18px;
     height: 2px;
-    background: $color-navy;
+    background: $white-60;
     border-radius: 2px;
     transition: background 0.15s;
   }
 
   &:hover span {
-    background: $color-blue;
+    background: $color-white;
   }
 
   @media (max-width: 999px) {
@@ -199,63 +224,14 @@ $sidebar-bg: linear-gradient(
   }
 }
 
-.topBarRight {
+.pageHeaderLeft {
   display: flex;
   align-items: center;
   gap: $space-3;
+  margin-right: auto;
 }
 
-.topBarBtn {
-  font-family: $font-body;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $color-white;
-  text-decoration: none;
-  padding: $space-2 $space-5;
-  border: none;
-  border-radius: $border-radius-md;
-  background: $color-navy;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: lighten($color-navy, 6%);
-  }
-}
-
-.topBarBtnOutline {
-  background: transparent;
-  color: $color-navy;
-  border: 1.5px solid $color-sand;
-
-  &:hover {
-    border-color: $color-blue;
-    color: $color-blue;
-    background: rgba($color-blue, 0.04);
-  }
-}
-
-// =============================================================================
-// Sub-header
-// =============================================================================
-
-.subHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $space-5 $space-6;
-  background: $color-navy;
-  flex-wrap: wrap;
-  gap: $space-4;
-}
-
-.subHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: $space-3;
-}
-
-.subHeaderTitle {
+.pageHeaderTitle {
   font-family: $font-heading;
   font-size: $font-size-md;
   font-weight: $font-weight-regular;
@@ -272,12 +248,12 @@ $sidebar-bg: linear-gradient(
 }
 
 .infoIcon {
-  color: rgba(255, 255, 255, 0.4);
+  color: $white-40;
   display: flex;
   transition: color 0.15s;
 
   .infoTip:hover & {
-    color: rgba(255, 255, 255, 0.8);
+    color: $white-80;
   }
 }
 
@@ -289,9 +265,7 @@ $sidebar-bg: linear-gradient(
   padding: $space-6;
   background: $color-white;
   border-radius: $border-radius-lg;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.18),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: $shadow-popover;
   z-index: 50;
   font-family: $font-body;
   font-size: $font-size-sm;
@@ -323,7 +297,7 @@ $sidebar-bg: linear-gradient(
 // Tabs
 .tabGroup {
   display: flex;
-  background: rgba(255, 255, 255, 0.08);
+  background: $white-08;
   border-radius: $border-radius-md;
   padding: 3px;
   gap: 2px;
@@ -333,7 +307,7 @@ $sidebar-bg: linear-gradient(
   font-family: $font-body;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: rgba(255, 255, 255, 0.6);
+  color: $white-60;
   background: transparent;
   border: none;
   padding: $space-2 $space-6;
@@ -342,15 +316,15 @@ $sidebar-bg: linear-gradient(
   transition: all 0.2s ease;
 
   &:hover:not(.tabActive) {
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.06);
+    color: $white-85;
+    background: $white-06;
   }
 }
 
 .tabActive {
   color: $color-navy;
   background: $color-white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: $shadow-card;
 }
 
 // =============================================================================
@@ -414,18 +388,17 @@ $sidebar-bg: linear-gradient(
   }
 
   &::placeholder {
-    color: rgba($color-stone, 0.6);
+    color: $stone-60;
   }
-
   &:hover {
-    border-color: darken($color-sand, 8%);
+    border-color: $sand-hover;
   }
 
   &:focus {
     outline: none;
     border-color: $color-blue;
     background: $color-white;
-    box-shadow: 0 0 0 3px rgba($color-blue, 0.1);
+    box-shadow: 0 0 0 3px $blue-10;
   }
 }
 
@@ -543,14 +516,14 @@ $sidebar-bg: linear-gradient(
     transition: all 0.15s ease;
 
     &:hover {
-      border-color: darken($color-sand, 8%);
+      border-color: $sand-hover;
     }
 
     &:focus {
       outline: none;
       border-color: $color-blue;
       background-color: $color-white;
-      box-shadow: 0 0 0 3px rgba($color-blue, 0.1);
+      box-shadow: 0 0 0 3px $blue-10;
     }
   }
 }
@@ -592,7 +565,7 @@ $sidebar-bg: linear-gradient(
   &:hover {
     border-color: $color-blue;
     color: $color-blue;
-    background: rgba($color-blue, 0.03);
+    background: $blue-03;
     svg {
       opacity: 0.8;
     }
@@ -609,8 +582,8 @@ $sidebar-bg: linear-gradient(
   }
 
   &:hover {
-    background: darken($color-blue, 6%);
-    border-color: darken($color-blue, 6%);
+    background: $blue-hover;
+    border-color: $blue-hover;
     color: $color-white;
   }
 }
@@ -632,7 +605,6 @@ $sidebar-bg: linear-gradient(
   overflow-x: auto;
   overflow-y: auto;
 
-  // Subtle scrollbar styling
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -641,10 +613,10 @@ $sidebar-bg: linear-gradient(
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-stone, 0.2);
+    background: $stone-20;
     border-radius: 3px;
     &:hover {
-      background: rgba($color-stone, 0.35);
+      background: $stone-35;
     }
   }
 }
@@ -681,7 +653,6 @@ $sidebar-bg: linear-gradient(
   th.sortableHeader {
     cursor: pointer;
     transition: color 0.15s ease;
-
     &:hover {
       color: $color-navy;
     }
@@ -690,7 +661,7 @@ $sidebar-bg: linear-gradient(
   td {
     padding: $space-2;
     color: $color-navy;
-    border-bottom: 1px solid rgba($color-sand, 0.5);
+    border-bottom: 1px solid $sand-50;
     vertical-align: middle;
     max-width: 0;
   }
@@ -704,7 +675,7 @@ $sidebar-bg: linear-gradient(
 }
 
 .cellEmpty {
-  color: rgba($color-stone, 0.35);
+  color: $stone-35;
   font-weight: $font-weight-regular;
 }
 
@@ -717,17 +688,15 @@ $sidebar-bg: linear-gradient(
 
 .dataRow {
   transition: background-color 0.1s ease;
-
   &:hover {
-    background-color: rgba($color-blue, 0.04);
+    background-color: $blue-04;
   }
 }
 
 .dataRowAlt {
-  background-color: rgba($color-offwhite, 0.5);
-
+  background-color: $offwhite-50;
   &:hover {
-    background-color: rgba($color-blue, 0.04);
+    background-color: $blue-04;
   }
 }
 
@@ -750,7 +719,7 @@ $sidebar-bg: linear-gradient(
   transition: all 0.15s ease;
 
   &:hover {
-    background-color: rgba($color-blue, 0.08);
+    background-color: $blue-08;
     color: $color-blue;
   }
 }
@@ -773,11 +742,11 @@ $sidebar-bg: linear-gradient(
 
 .sortIcon {
   display: inline-flex;
-  color: rgba($color-stone, 0.3);
+  color: $stone-30;
   transition: color 0.15s ease;
 
   th:hover & {
-    color: rgba($color-stone, 0.6);
+    color: $stone-60;
   }
 }
 
@@ -806,7 +775,7 @@ $sidebar-bg: linear-gradient(
     left: 2px;
     width: 2px;
     border-radius: 1px;
-    background: rgba($color-stone, 0.15);
+    background: $stone-15;
     transition: background-color 0.15s ease;
   }
 
@@ -824,11 +793,7 @@ $sidebar-bg: linear-gradient(
 
 .expandedContent {
   padding: $space-5 $space-6;
-  background: linear-gradient(
-    135deg,
-    rgba($color-blue-pale, 0.2) 0%,
-    rgba($color-blue-pale, 0.08) 100%
-  );
+  background: linear-gradient(135deg, $blue-pale-20 0%, $blue-pale-08 100%);
   border-left: 3px solid $color-blue;
   margin-left: 42px;
 }
@@ -851,7 +816,7 @@ $sidebar-bg: linear-gradient(
 }
 
 // =============================================================================
-// Chips
+// Chips — using graph palette tokens
 // =============================================================================
 
 .chip {
@@ -868,40 +833,39 @@ $sidebar-bg: linear-gradient(
   letter-spacing: 0.2px;
 }
 
-// Using brand-adjacent colors with subtle backgrounds
 .chip--success {
-  color: #1b7a3d;
-  border-color: rgba(#1b7a3d, 0.25);
-  background: rgba(#1b7a3d, 0.06);
+  color: $chip-success;
+  border-color: rgba($chip-success, 0.3);
+  background: rgba($chip-success, 0.08);
 }
 
 .chip--error {
-  color: #c62828;
-  border-color: rgba(#c62828, 0.25);
-  background: rgba(#c62828, 0.06);
+  color: $chip-error;
+  border-color: rgba($chip-error, 0.3);
+  background: rgba($chip-error, 0.08);
 }
 
 .chip--warning {
-  color: #e65100;
-  border-color: rgba(#e65100, 0.25);
-  background: rgba(#e65100, 0.06);
+  color: $chip-warning;
+  border-color: rgba($chip-warning, 0.3);
+  background: rgba($chip-warning, 0.08);
 }
 
 .chip--info {
-  color: $color-blue;
-  border-color: rgba($color-blue, 0.25);
-  background: rgba($color-blue, 0.06);
+  color: $chip-info;
+  border-color: $blue-25;
+  background: $blue-06;
 }
 
 .chip--secondary {
-  color: #7b1fa2;
-  border-color: rgba(#7b1fa2, 0.25);
-  background: rgba(#7b1fa2, 0.06);
+  color: $chip-secondary;
+  border-color: rgba($chip-secondary, 0.3);
+  background: rgba($chip-secondary, 0.08);
 }
 
 .chip--default {
   color: $color-stone;
-  border-color: rgba($color-stone, 0.2);
+  border-color: $stone-20;
   background: rgba($color-stone, 0.04);
 }
 
@@ -963,7 +927,7 @@ $sidebar-bg: linear-gradient(
   &:hover:not(:disabled) {
     background-color: $color-white;
     border-color: $color-sand;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    box-shadow: $shadow-card;
   }
 
   &:disabled {
