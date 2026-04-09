@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment, useRef, useCallback } from 'react'
+import { useState, useMemo, Fragment, useRef, useCallback, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   useReactTable,
@@ -408,27 +408,9 @@ function InfoTooltip() {
   )
 }
 
-// ── Main Page Component ──────────────────────────────────────────────────────
+// ── Memoized Data Table ──────────────────────────────────────────────────────
 
-type TabId = 'votes' | 'proposals'
-
-function VotingRecords() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
-  const [activeTab, setActiveTab] = useState<TabId>('votes')
-
-  // Filters
-  const [investorFilter, setInvestorFilter] = useState('')
-  const [companyFilter, setCompanyFilter] = useState('')
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
-  const [showAdditionalFilters, setShowAdditionalFilters] = useState(true)
-  const [esgFilter, setEsgFilter] = useState('')
-  const [antiEsgFilter, setAntiEsgFilter] = useState('')
-  const [mgmtRecFilter, setMgmtRecFilter] = useState('')
-  const [proponentFilter, setProponentFilter] = useState('')
-  const [materialityFilter, setMaterialityFilter] = useState('')
-
-  // TanStack Table state
+const DataTable = memo(function DataTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
 
@@ -449,29 +431,11 @@ function VotingRecords() {
     initialState: { pagination: { pageSize: 100 } },
   })
 
-  const clearAllFilters = () => {
-    setInvestorFilter('')
-    setCompanyFilter('')
-    setDateFrom('')
-    setDateTo('')
-    setEsgFilter('')
-    setAntiEsgFilter('')
-    setMgmtRecFilter('')
-    setProponentFilter('')
-    setMaterialityFilter('')
-  }
-
   const { pageIndex, pageSize } = table.getState().pagination
   const totalRows = table.getFilteredRowModel().rows.length
 
-  // Ref to the <table> element for imperative DOM updates during column resize
   const tableRef = useRef<HTMLTableElement>(null)
 
-  /**
-   * Custom column resize handler that manipulates the DOM directly via
-   * colgroup <col> elements, completely bypassing React during the drag.
-   * TanStack's onEnd mode commits the final size to state on mouseup.
-   */
   const handleResizeStart = useCallback(
     (headerId: string, startSize: number) =>
       (e: React.MouseEvent | React.TouchEvent) => {
@@ -501,7 +465,6 @@ function VotingRecords() {
           document.body.style.cursor = ''
           document.body.style.userSelect = ''
 
-          // Compute final delta and commit to TanStack state
           const clientX =
             'changedTouches' in ev ? ev.changedTouches[0].clientX : ev.clientX
           const delta = clientX - startX
@@ -526,6 +489,174 @@ function VotingRecords() {
       },
     [table],
   )
+
+  return (
+    <div className={styles.tableArea}>
+      <div className={styles.tableContainer}>
+        <table
+          className={styles.table}
+          ref={tableRef}
+          style={{ width: table.getTotalSize() }}
+        >
+          <colgroup>
+            {table.getFlatHeaders().map((header) => (
+              <col
+                key={header.id}
+                data-col-id={header.id}
+                style={{ width: header.getSize() }}
+              />
+            ))}
+          </colgroup>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort()
+                  const canResize = header.column.getCanResize()
+                  return (
+                    <th
+                      key={header.id}
+                      className={canSort ? styles.sortableHeader : undefined}
+                      onClick={
+                        canSort
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
+                      aria-sort={
+                        header.column.getIsSorted() === 'asc'
+                          ? 'ascending'
+                          : header.column.getIsSorted() === 'desc'
+                            ? 'descending'
+                            : undefined
+                      }
+                    >
+                      <span className={styles.headerContent}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                        {canSort && (
+                          <SortIndicator
+                            direction={header.column.getIsSorted()}
+                          />
+                        )}
+                      </span>
+                      {canResize && (
+                        <div
+                          className={styles.resizeHandle}
+                          onMouseDown={handleResizeStart(
+                            header.id,
+                            header.getSize(),
+                          )}
+                          onTouchStart={handleResizeStart(
+                            header.id,
+                            header.getSize(),
+                          )}
+                        />
+                      )}
+                    </th>
+                  )
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row, i) => (
+              <Fragment key={row.id}>
+                <tr
+                  className={`${styles.dataRow} ${i % 2 === 1 ? styles.dataRowAlt : ''}`}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+                {row.getIsExpanded() && (
+                  <tr className={styles.expandedRow}>
+                    <td colSpan={row.getVisibleCells().length}>
+                      <ExpandedRowContent row={row.original} />
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className={styles.paginationBar}>
+        <span className={styles.paginationLabel}>Rows per page:</span>
+        <select
+          className={styles.paginationSelect}
+          value={pageSize}
+          onChange={(e) => table.setPageSize(Number(e.target.value))}
+        >
+          {[25, 50, 100].map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
+          ))}
+        </select>
+        <span className={styles.paginationInfo}>
+          {pageIndex * pageSize + 1}–
+          {Math.min((pageIndex + 1) * pageSize, totalRows)} of {totalRows}
+        </span>
+        <button
+          className={styles.paginationBtn}
+          disabled={!table.getCanPreviousPage()}
+          onClick={() => table.previousPage()}
+          aria-label='Previous page'
+        >
+          <LuChevronLeft size={18} />
+        </button>
+        <button
+          className={styles.paginationBtn}
+          disabled={!table.getCanNextPage()}
+          onClick={() => table.nextPage()}
+          aria-label='Next page'
+        >
+          <LuChevronRight size={18} />
+        </button>
+      </div>
+    </div>
+  )
+})
+
+// ── Main Page Component ──────────────────────────────────────────────────────
+
+type TabId = 'votes' | 'proposals'
+
+function VotingRecords() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
+  const [activeTab, setActiveTab] = useState<TabId>('votes')
+
+  // Filters
+  const [investorFilter, setInvestorFilter] = useState('')
+  const [companyFilter, setCompanyFilter] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [showAdditionalFilters, setShowAdditionalFilters] = useState(true)
+  const [esgFilter, setEsgFilter] = useState('')
+  const [antiEsgFilter, setAntiEsgFilter] = useState('')
+  const [mgmtRecFilter, setMgmtRecFilter] = useState('')
+  const [proponentFilter, setProponentFilter] = useState('')
+  const [materialityFilter, setMaterialityFilter] = useState('')
+
+  const clearAllFilters = () => {
+    setInvestorFilter('')
+    setCompanyFilter('')
+    setDateFrom('')
+    setDateTo('')
+    setEsgFilter('')
+    setAntiEsgFilter('')
+    setMgmtRecFilter('')
+    setProponentFilter('')
+    setMaterialityFilter('')
+  }
 
   return (
     <div className={styles.pageLayout}>
@@ -715,142 +846,7 @@ function VotingRecords() {
             </div>
           </aside>
 
-          {/* Table */}
-          <div className={styles.tableArea}>
-            <div className={styles.tableContainer}>
-              <table
-                className={styles.table}
-                ref={tableRef}
-                style={{ width: table.getTotalSize() }}
-              >
-                <colgroup>
-                  {table.getFlatHeaders().map((header) => (
-                    <col
-                      key={header.id}
-                      data-col-id={header.id}
-                      style={{ width: header.getSize() }}
-                    />
-                  ))}
-                </colgroup>
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        const canSort = header.column.getCanSort()
-                        const canResize = header.column.getCanResize()
-                        return (
-                          <th
-                            key={header.id}
-                            className={
-                              canSort ? styles.sortableHeader : undefined
-                            }
-                            onClick={
-                              canSort
-                                ? header.column.getToggleSortingHandler()
-                                : undefined
-                            }
-                            aria-sort={
-                              header.column.getIsSorted() === 'asc'
-                                ? 'ascending'
-                                : header.column.getIsSorted() === 'desc'
-                                  ? 'descending'
-                                  : undefined
-                            }
-                          >
-                            <span className={styles.headerContent}>
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                              {canSort && (
-                                <SortIndicator
-                                  direction={header.column.getIsSorted()}
-                                />
-                              )}
-                            </span>
-                            {canResize && (
-                              <div
-                                className={styles.resizeHandle}
-                                onMouseDown={handleResizeStart(
-                                  header.id,
-                                  header.getSize(),
-                                )}
-                                onTouchStart={handleResizeStart(
-                                  header.id,
-                                  header.getSize(),
-                                )}
-                              />
-                            )}
-                          </th>
-                        )
-                      })}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row, i) => (
-                    <Fragment key={row.id}>
-                      <tr
-                        className={`${styles.dataRow} ${i % 2 === 1 ? styles.dataRowAlt : ''}`}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                      {row.getIsExpanded() && (
-                        <tr className={styles.expandedRow}>
-                          <td colSpan={row.getVisibleCells().length}>
-                            <ExpandedRowContent row={row.original} />
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            <div className={styles.paginationBar}>
-              <span className={styles.paginationLabel}>Rows per page:</span>
-              <select
-                className={styles.paginationSelect}
-                value={pageSize}
-                onChange={(e) => table.setPageSize(Number(e.target.value))}
-              >
-                {[25, 50, 100].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-              <span className={styles.paginationInfo}>
-                {pageIndex * pageSize + 1}–
-                {Math.min((pageIndex + 1) * pageSize, totalRows)} of {totalRows}
-              </span>
-              <button
-                className={styles.paginationBtn}
-                disabled={!table.getCanPreviousPage()}
-                onClick={() => table.previousPage()}
-                aria-label='Previous page'
-              >
-                <LuChevronLeft size={18} />
-              </button>
-              <button
-                className={styles.paginationBtn}
-                disabled={!table.getCanNextPage()}
-                onClick={() => table.nextPage()}
-                aria-label='Next page'
-              >
-                <LuChevronRight size={18} />
-              </button>
-            </div>
-          </div>
+          <DataTable />
         </div>
       </div>
     </div>
