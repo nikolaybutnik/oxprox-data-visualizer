@@ -1,0 +1,911 @@
+@use '../styles/tokens' as *;
+
+// =============================================================================
+// Page Layout
+// =============================================================================
+
+.pageLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: $color-offwhite;
+}
+
+// =============================================================================
+// Sidebar
+// =============================================================================
+
+$sidebar-width: 240px;
+$sidebar-bg: linear-gradient(
+  180deg,
+  darken($color-navy, 3%) 0%,
+  $color-navy 100%
+);
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $sidebar-width;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+
+  @media (max-width: 999px) {
+    transform: translateX(0);
+  }
+}
+
+.sidebarCollapsed {
+  @media (max-width: 999px) {
+    transform: translateX(-100%);
+  }
+}
+
+.sidebarOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+
+  @media (min-width: 1000px) {
+    display: none;
+  }
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-7 $space-6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebarLogo {
+  display: flex;
+  align-items: center;
+}
+
+.sidebarLogoImg {
+  height: 22px;
+  width: auto;
+}
+
+.sidebarClose {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $border-radius-sm;
+  transition: color 0.15s;
+
+  &:hover {
+    color: $color-white;
+  }
+
+  @media (max-width: 999px) {
+    display: flex;
+  }
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  padding: $space-5 0;
+  gap: 2px;
+}
+
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-6;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  &[data-active='true'] {
+    color: $color-white;
+    font-weight: $font-weight-medium;
+    background-color: rgba($color-blue, 0.15);
+    border-left-color: $color-blue;
+  }
+}
+
+.sidebarIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  flex-shrink: 0;
+  opacity: 0.7;
+
+  [data-active='true'] & {
+    opacity: 1;
+  }
+}
+
+// =============================================================================
+// Page Content
+// =============================================================================
+
+.pageContent {
+  flex: 1;
+  margin-left: $sidebar-width;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  @media (max-width: 999px) {
+    margin-left: 0;
+  }
+}
+
+// =============================================================================
+// Top Bar
+// =============================================================================
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: $space-3 $space-6;
+  background: $color-white;
+  border-bottom: 1px solid $color-sand;
+  min-height: 52px;
+  gap: $space-3;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $space-2;
+  margin-right: auto;
+
+  span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: $color-navy;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+
+  &:hover span {
+    background: $color-blue;
+  }
+
+  @media (max-width: 999px) {
+    display: flex;
+  }
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.topBarBtn {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-white;
+  text-decoration: none;
+  padding: $space-2 $space-5;
+  border: none;
+  border-radius: $border-radius-md;
+  background: $color-navy;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: lighten($color-navy, 6%);
+  }
+}
+
+.topBarBtnOutline {
+  background: transparent;
+  color: $color-navy;
+  border: 1.5px solid $color-sand;
+
+  &:hover {
+    border-color: $color-blue;
+    color: $color-blue;
+    background: rgba($color-blue, 0.04);
+  }
+}
+
+// =============================================================================
+// Sub-header
+// =============================================================================
+
+.subHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-5 $space-6;
+  background: $color-navy;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.subHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.subHeaderTitle {
+  font-family: $font-heading;
+  font-size: $font-size-md;
+  font-weight: $font-weight-regular;
+  color: $color-white;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+// Info tooltip
+.infoTip {
+  position: relative;
+  display: inline-flex;
+  cursor: help;
+}
+
+.infoIcon {
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  transition: color 0.15s;
+
+  .infoTip:hover & {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.infoPopover {
+  position: absolute;
+  top: calc(100% + #{$space-3});
+  left: -$space-2;
+  width: 380px;
+  padding: $space-6;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 50;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  line-height: $line-height-base;
+
+  strong {
+    display: block;
+    margin-bottom: $space-3;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+  }
+
+  p {
+    margin: 0 0 $space-2;
+    color: $color-stone;
+  }
+
+  ol {
+    padding-left: $space-6;
+    margin: $space-3 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    color: $color-stone;
+  }
+}
+
+// Tabs
+.tabGroup {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: $border-radius-md;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tab {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  padding: $space-2 $space-6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.tabActive) {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.tabActive {
+  color: $color-navy;
+  background: $color-white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+// =============================================================================
+// Primary Filters
+// =============================================================================
+
+.primaryFilters {
+  display: flex;
+  gap: $space-5;
+  padding: $space-5 $space-6;
+  background: $color-white;
+  border-bottom: 1px solid $color-sand;
+  flex-wrap: wrap;
+}
+
+.filterField {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.filterLabel {
+  font-family: $font-body;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  color: $color-stone;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: $space-3;
+  color: $color-stone;
+  display: flex;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.filterInput {
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: $color-offwhite;
+  transition: all 0.15s ease;
+
+  .inputWrap & {
+    padding-left: $space-9;
+  }
+
+  &::placeholder {
+    color: rgba($color-stone, 0.6);
+  }
+
+  &:hover {
+    border-color: darken($color-sand, 8%);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-blue;
+    background: $color-white;
+    box-shadow: 0 0 0 3px rgba($color-blue, 0.1);
+  }
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.dateSep {
+  color: $color-stone;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// Content Area
+// =============================================================================
+
+.contentArea {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+// ── Filter Sidebar ───────────────────────────────────────────────────────────
+
+.filterSidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: $color-white;
+  border-right: 1px solid $color-sand;
+  display: flex;
+  flex-direction: column;
+  padding: $space-5;
+  gap: $space-4;
+
+  @media (max-width: 899px) {
+    display: none;
+  }
+}
+
+.filterSidebarToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $space-2 0;
+  width: 100%;
+  color: $color-navy;
+}
+
+.filterSidebarTitleRow {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  color: $color-navy;
+}
+
+.filterSidebarTitle {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-navy;
+  margin: 0;
+}
+
+.chevron {
+  display: flex;
+  color: $color-stone;
+  transition: transform 0.25s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.additionalFilters {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding-top: $space-2;
+}
+
+.sideFilterField {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  label {
+    font-family: $font-body;
+    font-size: 11px;
+    font-weight: $font-weight-semibold;
+    color: $color-stone;
+    letter-spacing: 0.3px;
+  }
+
+  select {
+    padding: $space-2 $space-3;
+    padding-right: $space-8;
+    border: 1.5px solid $color-sand;
+    border-radius: $border-radius-md;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $color-navy;
+    background: $color-offwhite;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%2366625e' d='M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $space-3 center;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: darken($color-sand, 8%);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-blue;
+      background-color: $color-white;
+      box-shadow: 0 0 0 3px rgba($color-blue, 0.1);
+    }
+  }
+}
+
+.filterActions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-top: $space-4;
+  border-top: 1px solid $color-sand;
+}
+
+.actionDivider {
+  height: 1px;
+  background: $color-sand;
+  margin: $space-1 0;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-navy;
+  background: $color-white;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  padding: $space-2 $space-3;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  svg {
+    opacity: 0.5;
+  }
+
+  &:hover {
+    border-color: $color-blue;
+    color: $color-blue;
+    background: rgba($color-blue, 0.03);
+    svg {
+      opacity: 0.8;
+    }
+  }
+}
+
+.actionBtnPrimary {
+  background: $color-blue;
+  color: $color-white;
+  border-color: $color-blue;
+
+  svg {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: darken($color-blue, 6%);
+    border-color: darken($color-blue, 6%);
+    color: $color-white;
+  }
+}
+
+// =============================================================================
+// Table Area
+// =============================================================================
+
+.tableArea {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: $color-white;
+}
+
+.tableContainer {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+
+  // Subtle scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-stone, 0.2);
+    border-radius: 3px;
+    &:hover {
+      background: rgba($color-stone, 0.35);
+    }
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  min-width: 1200px;
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th {
+    padding: $space-3 $space-2;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $color-stone;
+    background-color: $color-offwhite;
+    border-bottom: 1px solid $color-sand;
+    white-space: nowrap;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    user-select: none;
+  }
+
+  td {
+    padding: $space-2;
+    color: $color-navy;
+    border-bottom: 1px solid rgba($color-sand, 0.5);
+    vertical-align: middle;
+    max-width: 0;
+  }
+}
+
+.cellTruncate {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cellEmpty {
+  color: rgba($color-stone, 0.35);
+  font-weight: $font-weight-regular;
+}
+
+.cellMono {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: 11.5px;
+  letter-spacing: -0.2px;
+}
+
+.dataRow {
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: rgba($color-blue, 0.04);
+  }
+}
+
+.dataRowAlt {
+  background-color: rgba($color-offwhite, 0.5);
+
+  &:hover {
+    background-color: rgba($color-blue, 0.04);
+  }
+}
+
+.expandCell {
+  text-align: center;
+  width: 42px;
+}
+
+.expandBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  color: $color-stone;
+  cursor: pointer;
+  border-radius: $border-radius-sm;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: rgba($color-blue, 0.08);
+    color: $color-blue;
+  }
+}
+
+.expandIcon {
+  display: flex;
+  transition: transform 0.2s ease;
+}
+
+.expandIconOpen {
+  transform: rotate(180deg);
+}
+
+.expandedRow {
+  td {
+    padding: 0;
+    border-bottom: 1px solid $color-sand;
+  }
+}
+
+.expandedContent {
+  padding: $space-5 $space-6;
+  background: linear-gradient(
+    135deg,
+    rgba($color-blue-pale, 0.2) 0%,
+    rgba($color-blue-pale, 0.08) 100%
+  );
+  border-left: 3px solid $color-blue;
+  margin-left: 42px;
+}
+
+.expandedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $space-4;
+  font-size: $font-size-sm;
+}
+
+.expandedLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: $color-stone;
+  margin-bottom: $space-1;
+}
+
+// =============================================================================
+// Chips
+// =============================================================================
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $space-2;
+  border-radius: 10px;
+  font-family: $font-body;
+  font-size: 10.5px;
+  font-weight: $font-weight-semibold;
+  border: 1px solid;
+  white-space: nowrap;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+// Using brand-adjacent colors with subtle backgrounds
+.chip--success {
+  color: #1b7a3d;
+  border-color: rgba(#1b7a3d, 0.25);
+  background: rgba(#1b7a3d, 0.06);
+}
+
+.chip--error {
+  color: #c62828;
+  border-color: rgba(#c62828, 0.25);
+  background: rgba(#c62828, 0.06);
+}
+
+.chip--warning {
+  color: #e65100;
+  border-color: rgba(#e65100, 0.25);
+  background: rgba(#e65100, 0.06);
+}
+
+.chip--info {
+  color: $color-blue;
+  border-color: rgba($color-blue, 0.25);
+  background: rgba($color-blue, 0.06);
+}
+
+.chip--secondary {
+  color: #7b1fa2;
+  border-color: rgba(#7b1fa2, 0.25);
+  background: rgba(#7b1fa2, 0.06);
+}
+
+.chip--default {
+  color: $color-stone;
+  border-color: rgba($color-stone, 0.2);
+  background: rgba($color-stone, 0.04);
+}
+
+// =============================================================================
+// Pagination
+// =============================================================================
+
+.paginationBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: $space-3 $space-5;
+  border-top: 1px solid $color-sand;
+  gap: $space-3;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-stone;
+  flex-shrink: 0;
+  background: $color-offwhite;
+}
+
+.paginationLabel {
+  font-size: $font-size-xs;
+}
+
+.paginationSelect {
+  padding: $space-1 $space-3;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-sm;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: $color-white;
+  cursor: pointer;
+}
+
+.paginationInfo {
+  font-size: $font-size-sm;
+  color: $color-navy;
+  font-weight: $font-weight-medium;
+  min-width: 100px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.paginationBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  background: none;
+  color: $color-navy;
+  cursor: pointer;
+  border-radius: $border-radius-sm;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: $color-white;
+    border-color: $color-sand;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}

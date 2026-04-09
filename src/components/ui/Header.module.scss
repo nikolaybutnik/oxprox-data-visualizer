@@ -17,11 +17,20 @@
   min-height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: $space-6;
 
   @include bp-md {
     padding: 0 $space-10;
     min-height: 80px;
   }
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -30,5 +39,42 @@
 
   @include bp-md {
     height: 24px;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  @include bp-md {
+    gap: $space-4;
+  }
+}
+
+.navLink {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $overlay-white-60;
+  text-decoration: none;
+  padding: $space-2 $space-3;
+  border-radius: $border-radius-md;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+
+  @include bp-md {
+    font-size: $font-size-base;
+    padding: $space-2 $space-4;
+  }
+
+  &:hover {
+    color: $color-white;
+  }
+
+  &[data-active='true'] {
+    color: $color-white;
+    background-color: rgba($color-white, 0.1);
   }
 }
