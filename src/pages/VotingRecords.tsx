@@ -10,6 +10,7 @@ import {
   createColumnHelper,
   type SortingState,
   type ExpandedState,
+  type Row,
 } from '@tanstack/react-table'
 import {
   LuLayoutGrid,
@@ -40,8 +41,6 @@ import {
   type ProponentType,
 } from '../data/votingRecords'
 import styles from './VotingRecords.module.scss'
-
-// ── Chip Components ──────────────────────────────────────────────────────────
 
 type ChipColor =
   | 'success'
@@ -101,8 +100,6 @@ function Truncate({ value }: { value: string }) {
     <Empty />
   )
 }
-
-// ── TanStack Column Definitions ──────────────────────────────────────────────
 
 const columnHelper = createColumnHelper<VotingRecord>()
 
@@ -242,8 +239,6 @@ const columns = [
   }),
 ]
 
-// ── Sort Indicator ───────────────────────────────────────────────────────────
-
 function SortIndicator({ direction }: { direction: false | 'asc' | 'desc' }) {
   if (direction === 'asc')
     return (
@@ -264,44 +259,98 @@ function SortIndicator({ direction }: { direction: false | 'asc' | 'desc' }) {
   )
 }
 
-// ── Expanded Row Content ─────────────────────────────────────────────────────
+const MemoRow = memo(
+  function MemoRow({
+    row,
+    index,
+    isExpanded,
+  }: {
+    row: Row<VotingRecord>
+    index: number
+    isExpanded: boolean
+  }) {
+    return (
+      <Fragment>
+        <tr
+          className={`${styles.dataRow} ${index % 2 === 1 ? styles.dataRowAlt : ''}`}
+        >
+          {row.getVisibleCells().map((cell) => (
+            <td key={cell.id}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </td>
+          ))}
+        </tr>
+        <tr className={styles.expandedRow}>
+          <td
+            colSpan={row.getVisibleCells().length}
+            className={styles.expandedCell}
+          >
+            <div
+              className={`${styles.expandedWrapper} ${isExpanded ? styles.expandedWrapperOpen : ''}`}
+            >
+              <div className={styles.expandedInner}>
+                <ExpandedRowContent row={row.original} />
+              </div>
+            </div>
+          </td>
+        </tr>
+      </Fragment>
+    )
+  },
+  (prev, next) =>
+    prev.row.id === next.row.id &&
+    prev.index === next.index &&
+    prev.isExpanded === next.isExpanded,
+)
 
 function ExpandedRowContent({ row }: { row: VotingRecord }) {
   return (
     <div className={styles.expandedContent}>
+      <div className={styles.expandedHeader}>
+        <span className={styles.expandedTitle}>{row.description}</span>
+        <div className={styles.expandedChips}>
+          <VoteChip value={row.voteDecision} />
+          <MeetingTypeChip value={row.meetingType} />
+          {row.proponent && <ProponentChip value={row.proponent} />}
+        </div>
+      </div>
       <div className={styles.expandedGrid}>
-        <div>
-          <span className={styles.expandedLabel}>Description</span>
-          <span>{row.description}</span>
-        </div>
-        <div>
+        <div className={styles.expandedField}>
           <span className={styles.expandedLabel}>Company</span>
-          <span>
-            {row.company} · {row.companyCountry}
-          </span>
+          <span className={styles.expandedValue}>{row.company}</span>
         </div>
-        <div>
+        <div className={styles.expandedField}>
+          <span className={styles.expandedLabel}>Country</span>
+          <span className={styles.expandedValue}>{row.companyCountry}</span>
+        </div>
+        <div className={styles.expandedField}>
           <span className={styles.expandedLabel}>Industry</span>
-          <span>{row.industry}</span>
+          <span className={styles.expandedValue}>{row.industry}</span>
         </div>
-        <div>
-          <span className={styles.expandedLabel}>Meeting</span>
-          <span>
-            {row.meetingType} · {row.meetingDate}
-          </span>
+        <div className={styles.expandedField}>
+          <span className={styles.expandedLabel}>Meeting Date</span>
+          <span className={styles.expandedValue}>{row.meetingDate || '—'}</span>
+        </div>
+        <div className={styles.expandedField}>
+          <span className={styles.expandedLabel}>Item</span>
+          <span className={styles.expandedValue}>{row.item}</span>
+        </div>
+        <div className={styles.expandedField}>
+          <span className={styles.expandedLabel}>Subject</span>
+          <span className={styles.expandedValue}>{row.subject || '—'}</span>
         </div>
         {row.rationale && (
-          <div>
+          <div
+            className={`${styles.expandedField} ${styles.expandedFieldWide}`}
+          >
             <span className={styles.expandedLabel}>Rationale</span>
-            <span>{row.rationale}</span>
+            <span className={styles.expandedValue}>{row.rationale}</span>
           </div>
         )}
       </div>
     </div>
   )
 }
-
-// ── Sidebar Nav ──────────────────────────────────────────────────────────────
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LuLayoutGrid },
@@ -371,8 +420,6 @@ function Sidebar({
   )
 }
 
-// ── Info Tooltip ─────────────────────────────────────────────────────────────
-
 function InfoTooltip() {
   const [open, setOpen] = useState(false)
   return (
@@ -407,8 +454,6 @@ function InfoTooltip() {
     </span>
   )
 }
-
-// ── Memoized Data Table ──────────────────────────────────────────────────────
 
 const DataTable = memo(function DataTable() {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -562,27 +607,12 @@ const DataTable = memo(function DataTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, i) => (
-              <Fragment key={row.id}>
-                <tr
-                  className={`${styles.dataRow} ${i % 2 === 1 ? styles.dataRowAlt : ''}`}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                {row.getIsExpanded() && (
-                  <tr className={styles.expandedRow}>
-                    <td colSpan={row.getVisibleCells().length}>
-                      <ExpandedRowContent row={row.original} />
-                    </td>
-                  </tr>
-                )}
-              </Fragment>
+              <MemoRow
+                key={row.id}
+                row={row}
+                index={i}
+                isExpanded={row.getIsExpanded()}
+              />
             ))}
           </tbody>
         </table>
