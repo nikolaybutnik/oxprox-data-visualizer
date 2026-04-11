@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // =============================================================================
 // Design Tokens — OxProx Brand Guidelines (Sept 2025)
 // =============================================================================
@@ -168,8 +170,8 @@ $chip-info: $color-blue;
 $chip-secondary: $graph-pink;
 
 // Derived interactive states
-$sand-hover: darken($color-sand, 8%);
-$blue-hover: darken($color-blue, 6%);
+$sand-hover: color.adjust($color-sand, $lightness: -8%);
+$blue-hover: color.adjust($color-blue, $lightness: -6%);
 
 // -----------------------------------------------------------------------------
 // Layout

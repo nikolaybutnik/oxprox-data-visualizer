@@ -22,6 +22,7 @@ import {
   LuDownload,
   LuSave,
   LuBookmark,
+  LuEllipsisVertical,
   LuX,
   LuLogIn,
   LuChevronDown,
@@ -663,6 +664,8 @@ type TabId = 'votes' | 'proposals'
 function VotingRecords() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const [activeTab, setActiveTab] = useState<TabId>('votes')
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
+  const [actionsMenuOpen, setActionsMenuOpen] = useState(false)
 
   // Filters
   const [investorFilter, setInvestorFilter] = useState('')
@@ -776,27 +779,91 @@ function VotingRecords() {
               />
             </div>
           </div>
+          <div className={styles.mobileActions}>
+            <button
+              className={styles.mobileFilterBtn}
+              onClick={() => setFilterDrawerOpen(true)}
+            >
+              <LuSlidersHorizontal size={15} />
+              <span>Filters</span>
+            </button>
+            <div className={styles.actionsMenuWrap}>
+              <button
+                className={styles.mobileFilterBtn}
+                onClick={() => setActionsMenuOpen((v) => !v)}
+              >
+                <LuEllipsisVertical size={15} />
+                <span>Actions</span>
+              </button>
+              {actionsMenuOpen && (
+                <>
+                  <div
+                    className={styles.actionsMenuBackdrop}
+                    onClick={() => setActionsMenuOpen(false)}
+                  />
+                  <div className={styles.actionsMenu}>
+                    <button
+                      className={styles.actionsMenuItem}
+                      onClick={() => setActionsMenuOpen(false)}
+                    >
+                      <LuSave size={14} /> Save As…
+                    </button>
+                    <button
+                      className={styles.actionsMenuItem}
+                      onClick={() => setActionsMenuOpen(false)}
+                    >
+                      <LuBookmark size={14} /> Saved Queries
+                    </button>
+                    <button
+                      className={styles.actionsMenuItem}
+                      onClick={() => setActionsMenuOpen(false)}
+                    >
+                      <LuDownload size={14} /> Download
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Content: filter sidebar + table */}
         <div className={styles.contentArea}>
-          <aside className={styles.filterSidebar}>
-            <button
-              className={styles.filterSidebarToggle}
-              onClick={() => setShowAdditionalFilters((v) => !v)}
-            >
-              <div className={styles.filterSidebarTitleRow}>
-                <LuSlidersHorizontal size={15} />
-                <h2 className={styles.filterSidebarTitle}>
-                  Additional Filters
-                </h2>
-              </div>
-              <span
-                className={`${styles.chevron} ${showAdditionalFilters ? styles.chevronOpen : ''}`}
+          {/* Mobile filter drawer overlay */}
+          {filterDrawerOpen && (
+            <div
+              className={styles.filterDrawerOverlay}
+              onClick={() => setFilterDrawerOpen(false)}
+            />
+          )}
+          <aside
+            className={`${styles.filterSidebar} ${filterDrawerOpen ? styles.filterSidebarOpen : ''}`}
+          >
+            <div className={styles.filterSidebarHeader}>
+              <button
+                className={styles.filterSidebarToggle}
+                onClick={() => setShowAdditionalFilters((v) => !v)}
               >
-                <LuChevronDown size={16} />
-              </span>
-            </button>
+                <div className={styles.filterSidebarTitleRow}>
+                  <LuSlidersHorizontal size={15} />
+                  <h2 className={styles.filterSidebarTitle}>
+                    Additional Filters
+                  </h2>
+                </div>
+                <span
+                  className={`${styles.chevron} ${showAdditionalFilters ? styles.chevronOpen : ''}`}
+                >
+                  <LuChevronDown size={16} />
+                </span>
+              </button>
+              <button
+                className={styles.filterDrawerClose}
+                onClick={() => setFilterDrawerOpen(false)}
+                aria-label='Close filters'
+              >
+                <LuX size={18} />
+              </button>
+            </div>
 
             {showAdditionalFilters && (
               <div className={styles.additionalFilters}>
@@ -863,7 +930,6 @@ function VotingRecords() {
               <button className={styles.actionBtn} onClick={clearAllFilters}>
                 <LuX size={14} /> Clear All
               </button>
-              <div className={styles.actionDivider} />
               <button className={styles.actionBtn}>
                 <LuSave size={14} /> Save As…
               </button>

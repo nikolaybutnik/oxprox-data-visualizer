@@ -176,6 +176,8 @@ $sidebar-width: 240px;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100vh;
+  overflow: hidden;
 
   @media (max-width: 999px) {
     margin-left: 0;
@@ -193,7 +195,12 @@ $sidebar-width: 240px;
   padding: 0 $space-6;
   background: $color-navy;
   gap: $space-4;
-  flex-wrap: wrap;
+
+  @media (max-width: 999px) {
+    min-height: 56px;
+    padding: 0 $space-4;
+    gap: $space-3;
+  }
 }
 
 .hamburger {
@@ -238,6 +245,11 @@ $sidebar-width: 240px;
   color: $color-white;
   letter-spacing: 2px;
   margin: 0;
+
+  @media (max-width: 999px) {
+    font-size: $font-size-sm;
+    letter-spacing: 1.5px;
+  }
 }
 
 // Info tooltip
@@ -272,11 +284,22 @@ $sidebar-width: 240px;
   color: $color-navy;
   line-height: $line-height-base;
 
+  @media (max-width: 999px) {
+    width: 280px;
+    padding: $space-4;
+    font-size: $font-size-xs;
+    left: 0;
+  }
+
   strong {
     display: block;
     margin-bottom: $space-3;
     font-size: $font-size-base;
     font-weight: $font-weight-semibold;
+
+    @media (max-width: 999px) {
+      font-size: $font-size-sm;
+    }
   }
 
   p {
@@ -291,6 +314,11 @@ $sidebar-width: 240px;
     flex-direction: column;
     gap: $space-3;
     color: $color-stone;
+
+    @media (max-width: 999px) {
+      padding-left: $space-4;
+      gap: $space-2;
+    }
   }
 }
 
@@ -315,6 +343,11 @@ $sidebar-width: 240px;
   cursor: pointer;
   transition: all 0.2s ease;
 
+  @media (max-width: 999px) {
+    font-size: $font-size-xs;
+    padding: $space-1 $space-4;
+  }
+
   &:hover:not(.tabActive) {
     color: $white-85;
     background: $white-06;
@@ -338,6 +371,11 @@ $sidebar-width: 240px;
   background: $color-white;
   border-bottom: 1px solid $color-sand;
   flex-wrap: wrap;
+
+  @media (max-width: 999px) {
+    padding: $space-3 $space-4;
+    gap: $space-3;
+  }
 }
 
 .filterField {
@@ -346,6 +384,11 @@ $sidebar-width: 240px;
   display: flex;
   flex-direction: column;
   gap: $space-2;
+
+  @media (max-width: 999px) {
+    min-width: 100%;
+    gap: $space-1;
+  }
 }
 
 .filterLabel {
@@ -406,6 +449,12 @@ $sidebar-width: 240px;
   display: flex;
   align-items: center;
   gap: $space-2;
+  min-width: 0;
+
+  .filterInput {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .dateSep {
@@ -436,9 +485,163 @@ $sidebar-width: 240px;
   flex-direction: column;
   padding: $space-5;
   gap: $space-4;
+  overflow-y: auto;
 
   @media (max-width: 899px) {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 100;
+    border-right: none;
+    border-left: 1px solid $color-sand;
+    box-shadow: $shadow-popover;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.filterSidebarOpen {
+  @media (max-width: 899px) {
+    transform: translateX(0);
+  }
+}
+
+.filterDrawerOverlay {
+  display: none;
+
+  @media (max-width: 899px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: $overlay-black-50;
+    z-index: 99;
+  }
+}
+
+.filterSidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.filterDrawerClose {
+  display: none;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $border-radius-sm;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: $color-navy;
+  }
+
+  @media (max-width: 899px) {
+    display: flex;
+  }
+}
+
+.mobileFilterBtn {
+  display: none;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-navy;
+  background: $color-white;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $color-blue;
+    color: $color-blue;
+  }
+
+  @media (max-width: 899px) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.mobileActions {
+  display: none;
+
+  @media (max-width: 899px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-2;
+    width: 100%;
+  }
+
+  .mobileFilterBtn {
+    width: 100%;
+  }
+}
+
+.actionsMenuWrap {
+  position: relative;
+  display: none;
+
+  @media (max-width: 899px) {
+    display: block;
+  }
+
+  .mobileFilterBtn {
+    width: 100%;
+  }
+}
+
+.actionsMenuBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+}
+
+.actionsMenu {
+  position: absolute;
+  bottom: calc(100% + #{$space-2});
+  right: 0;
+  min-width: 180px;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-popover;
+  z-index: 50;
+  padding: $space-1 0;
+}
+
+.actionsMenuItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3 $space-4;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-navy;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background: $color-offwhite;
+  }
+
+  svg {
+    color: $color-stone;
   }
 }
 
@@ -450,7 +653,7 @@ $sidebar-width: 240px;
   border: none;
   cursor: pointer;
   padding: $space-2 0;
-  width: 100%;
+  flex: 1;
   color: $color-navy;
 }
 
@@ -534,12 +737,6 @@ $sidebar-width: 240px;
   gap: $space-2;
   padding-top: $space-4;
   border-top: 1px solid $color-sand;
-}
-
-.actionDivider {
-  height: 1px;
-  background: $color-sand;
-  margin: $space-1 0;
 }
 
 .actionBtn {
@@ -796,13 +993,13 @@ $sidebar-width: 240px;
 }
 
 .expandedWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.2s ease;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease;
 }
 
 .expandedWrapperOpen {
-  grid-template-rows: 1fr;
+  max-height: 300px;
 }
 
 .expandedInner {
@@ -815,6 +1012,11 @@ $sidebar-width: 240px;
   background: $color-offwhite;
   border-bottom: 1px solid $color-sand;
   border-left: 3px solid $color-blue;
+
+  @media (max-width: 999px) {
+    padding: $space-3 $space-4;
+    padding-left: calc(42px + #{$space-3});
+  }
 }
 
 .expandedHeader {
@@ -825,6 +1027,13 @@ $sidebar-width: 240px;
   margin-bottom: $space-4;
   padding-bottom: $space-4;
   border-bottom: 1px solid $color-sand;
+
+  @media (max-width: 999px) {
+    flex-direction: column;
+    gap: $space-2;
+    margin-bottom: $space-3;
+    padding-bottom: $space-3;
+  }
 }
 
 .expandedTitle {
@@ -944,6 +1153,12 @@ $sidebar-width: 240px;
   color: $color-stone;
   flex-shrink: 0;
   background: $color-offwhite;
+
+  @media (max-width: 999px) {
+    padding: $space-2 $space-3;
+    gap: $space-2;
+    font-size: $font-size-xs;
+  }
 }
 
 .paginationLabel {
