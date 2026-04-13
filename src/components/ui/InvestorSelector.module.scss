@@ -1,0 +1,554 @@
+@use '../../styles/tokens' as *;
+
+// =============================================================================
+// Investor Selector
+// =============================================================================
+
+.wrapper {
+  position: relative;
+}
+
+// ── Trigger ──────────────────────────────────────────────────────────────────
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  min-height: 38px;
+  padding: $space-1 $space-3;
+  padding-left: $space-9;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  background: $color-offwhite;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $sand-hover;
+  }
+}
+
+.triggerOpen {
+  border-color: $color-blue;
+  background: $color-white;
+  box-shadow: 0 0 0 3px $blue-10;
+}
+
+.triggerIcon {
+  position: absolute;
+  left: $space-3;
+  color: $color-stone;
+  display: flex;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.triggerPlaceholder {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $stone-60;
+  flex: 1;
+  min-width: 0;
+}
+
+.triggerChips {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.triggerChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 160px;
+  padding: 1px $space-2;
+  background: $blue-08;
+  border: 1px solid $blue-15;
+  border-radius: $border-radius-sm;
+  font-family: $font-body;
+  font-size: 11px;
+  color: $color-navy;
+  white-space: nowrap;
+
+  @media (max-width: $bp-md) {
+    max-width: 120px;
+  }
+}
+
+.triggerChipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.triggerChipRemove {
+  display: inline-flex;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 2px;
+  transition: color 0.1s;
+
+  &:hover {
+    color: $graph-orange;
+  }
+}
+
+.triggerMore {
+  font-family: $font-body;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  color: $color-blue;
+  flex-shrink: 0;
+  padding: 1px $space-1;
+}
+
+.triggerArrow {
+  display: flex;
+  color: $color-stone;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.triggerArrowOpen {
+  transform: rotate(180deg);
+}
+
+// ── Backdrop (mobile full-screen) ────────────────────────────────────────────
+
+.backdrop {
+  display: none;
+
+  @media (max-width: $bp-md) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: $overlay-black-50;
+    z-index: 199;
+    backdrop-filter: blur(2px);
+  }
+}
+
+// ── Panel ────────────────────────────────────────────────────────────────────
+
+.panel {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  left: 0;
+  right: 0;
+  min-width: 360px;
+  max-height: 480px;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-popover;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (max-width: $bp-md) {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-width: unset;
+    height: 85vh;
+    max-height: 85vh;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    border-bottom: none;
+  }
+}
+
+// ── Search ───────────────────────────────────────────────────────────────────
+
+.panelSearch {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  border-bottom: 1px solid $color-sand;
+  position: relative;
+}
+
+.panelSearchIcon {
+  color: $color-stone;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.panelSearchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: transparent;
+
+  &::placeholder {
+    color: $stone-60;
+  }
+}
+
+.panelSearchClear {
+  display: flex;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $border-radius-sm;
+  transition: color 0.1s;
+
+  &:hover {
+    color: $color-navy;
+  }
+}
+
+.hint {
+  margin: 0;
+  padding: $space-1 $space-4;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-stone;
+  background: $color-offwhite;
+}
+
+// ── Pre-filters ──────────────────────────────────────────────────────────────
+
+.preFilters {
+  display: flex;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  border-bottom: 1px solid $color-sand;
+  background: $color-offwhite;
+  flex-wrap: wrap;
+}
+
+.preFilterField {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.preFilterBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-1;
+  width: 100%;
+  padding: $space-1 $space-2;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $color-blue;
+  }
+}
+
+.preFilterBtnLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preFilterBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+}
+
+.countryDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 200px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-popover;
+  z-index: 10;
+  padding: $space-2 0;
+}
+
+.countryOption {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  cursor: pointer;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background: $color-offwhite;
+  }
+
+  input[type='checkbox'] {
+    accent-color: $color-blue;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.preFilterSelect {
+  flex: 1;
+  min-width: 0;
+  padding: $space-1 $space-6 $space-1 $space-2;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%2366625e' d='M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-2 center;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: $color-blue;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-blue;
+  }
+}
+
+// ── Results list ─────────────────────────────────────────────────────────────
+
+.resultsList {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: 220px;
+  padding: $space-1 0;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $stone-20;
+    border-radius: 3px;
+  }
+
+  @media (max-width: $bp-md) {
+    max-height: none;
+    flex: 1;
+    min-height: 100px;
+  }
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-2 $space-4;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background: $color-offwhite;
+  }
+}
+
+.resultItemSelected {
+  background: $blue-06;
+
+  &:hover {
+    background: $blue-08;
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid $color-sand;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  color: transparent;
+}
+
+.checkboxChecked {
+  background: $color-blue;
+  border-color: $color-blue;
+  color: $color-white;
+}
+
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.resultName {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-navy;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultMeta {
+  font-family: $font-body;
+  font-size: 10px;
+  color: $color-stone;
+}
+
+.noResults {
+  margin: 0;
+  padding: $space-6 $space-4;
+  text-align: center;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-stone;
+}
+
+// ── Selected summary ─────────────────────────────────────────────────────────
+
+.selectedSummary {
+  padding: $space-2 $space-4;
+  border-top: 1px solid $color-sand;
+  background: $color-offwhite;
+}
+
+.selectedCount {
+  display: block;
+  font-family: $font-body;
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  color: $color-stone;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: $space-1;
+}
+
+.selectedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  max-height: 60px;
+  overflow-y: auto;
+}
+
+.selectedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px $space-2;
+  background: $color-white;
+  border: 1px solid $blue-15;
+  border-radius: $border-radius-sm;
+  font-family: $font-body;
+  font-size: 10px;
+  color: $color-navy;
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectedChipRemove {
+  display: inline-flex;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.1s;
+
+  &:hover {
+    color: $graph-orange;
+  }
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border-top: 1px solid $color-sand;
+  background: $color-white;
+}
+
+.footerBtnSecondary {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-stone;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $space-2 $space-3;
+  border-radius: $border-radius-sm;
+  transition: color 0.15s;
+
+  &:hover:not(:disabled) {
+    color: $color-navy;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.footerBtnPrimary {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-white;
+  background: $color-blue;
+  border: none;
+  padding: $space-2 $space-5;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: $blue-hover;
+  }
+}
