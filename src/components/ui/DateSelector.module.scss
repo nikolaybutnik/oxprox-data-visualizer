@@ -1,0 +1,287 @@
+@use '../../styles/tokens' as *;
+
+.wrapper {
+  position: relative;
+}
+
+// ── Trigger ──────────────────────────────────────────────────────────────────
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  min-height: 38px;
+  padding: $space-1 $space-3;
+  padding-left: $space-9;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  background: $color-offwhite;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $sand-hover;
+  }
+}
+
+.triggerOpen {
+  border-color: $color-blue;
+  background: $color-white;
+  box-shadow: 0 0 0 3px $blue-10;
+}
+
+.triggerIcon {
+  position: absolute;
+  left: $space-3;
+  color: $color-stone;
+  display: flex;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.triggerPlaceholder {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $stone-60;
+  flex: 1;
+}
+
+.triggerValue {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.triggerClear {
+  display: inline-flex;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: color 0.1s;
+  &:hover {
+    color: $graph-orange;
+  }
+}
+
+.triggerArrow {
+  display: flex;
+  color: $color-stone;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.triggerArrowOpen {
+  transform: rotate(180deg);
+}
+
+// ── Backdrop ─────────────────────────────────────────────────────────────────
+
+.backdrop {
+  display: none;
+  @media (max-width: $bp-md) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: $overlay-black-50;
+    z-index: 199;
+    backdrop-filter: blur(2px);
+  }
+}
+
+// ── Panel ────────────────────────────────────────────────────────────────────
+
+.panel {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  left: 0;
+  right: 0;
+  min-width: 300px;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-popover;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (max-width: $bp-md) {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-width: unset;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    border-bottom: none;
+  }
+}
+
+// ── Sections ─────────────────────────────────────────────────────────────────
+
+.section {
+  padding: $space-4;
+}
+
+.sectionLabel {
+  display: block;
+  font-family: $font-body;
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: $color-stone;
+  margin-bottom: $space-3;
+}
+
+.divider {
+  height: 1px;
+  background: $color-sand;
+}
+
+// ── Proxy period grid ────────────────────────────────────────────────────────
+
+.periodGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-1;
+}
+
+.periodBtn {
+  padding: $space-2 $space-3;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-navy;
+  background: $color-offwhite;
+  border: 1.5px solid transparent;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: center;
+
+  &:hover {
+    background: $blue-06;
+    border-color: $blue-15;
+    color: $color-blue;
+  }
+}
+
+.periodBtnActive {
+  background: $blue-08;
+  border-color: $color-blue;
+  color: $color-blue;
+  font-weight: $font-weight-semibold;
+}
+
+// ── Custom range ─────────────────────────────────────────────────────────────
+
+.customRange {
+  display: flex;
+  gap: $space-3;
+}
+
+.dateField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.dateLabel {
+  font-family: $font-body;
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  color: $color-stone;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dateInput {
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-sm;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  background: $color-offwhite;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $sand-hover;
+  }
+  &:focus {
+    outline: none;
+    border-color: $color-blue;
+    background: $color-white;
+    box-shadow: 0 0 0 3px $blue-10;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    border-radius: $border-radius-sm;
+    padding: 2px;
+    transition: background-color 0.15s ease;
+    &:hover {
+      background-color: $color-blue-pale;
+    }
+  }
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border-top: 1px solid $color-sand;
+}
+
+.footerBtnSecondary {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-stone;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $space-2 $space-3;
+  border-radius: $border-radius-sm;
+  transition: color 0.15s;
+  &:hover:not(:disabled) {
+    color: $color-navy;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.footerBtnPrimary {
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-white;
+  background: $color-blue;
+  border: none;
+  padding: $space-2 $space-5;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  &:hover {
+    background: $blue-hover;
+  }
+}

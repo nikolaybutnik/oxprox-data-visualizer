@@ -43,6 +43,7 @@ import {
 } from '../data/votingRecords'
 import InvestorSelector from '../components/ui/InvestorSelector'
 import CompanySelector from '../components/ui/CompanySelector'
+import DateSelector from '../components/ui/DateSelector'
 import EsgFilter from '../components/ui/EsgFilter'
 import styles from './VotingRecords.module.scss'
 
@@ -750,21 +751,12 @@ function VotingRecords() {
           </div>
           <div className={styles.filterField}>
             <label className={styles.filterLabel}>Meeting Date Range</label>
-            <div className={styles.dateRange}>
-              <input
-                type='date'
-                className={styles.filterInput}
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-              />
-              <span className={styles.dateSep}>to</span>
-              <input
-                type='date'
-                className={styles.filterInput}
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-              />
-            </div>
+            <DateSelector
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              onChangeFrom={setDateFrom}
+              onChangeTo={setDateTo}
+            />
           </div>
           <div className={styles.mobileActions}>
             <button

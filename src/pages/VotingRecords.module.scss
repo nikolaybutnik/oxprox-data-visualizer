@@ -468,6 +468,33 @@ $sidebar-width: 240px;
   }
 }
 
+.dateGroup {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+
+  .filterInput {
+    flex: 1;
+    min-width: 0;
+
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      border-radius: $border-radius-sm;
+      padding: 2px;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: $color-blue-pale;
+      }
+    }
+  }
+
+  @media (max-width: 999px) {
+    flex-wrap: wrap;
+  }
+}
+
 .dateSep {
   color: $color-stone;
   font-size: $font-size-xs;
