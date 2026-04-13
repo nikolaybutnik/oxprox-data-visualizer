@@ -156,15 +156,52 @@
 
   @media (max-width: $bp-md) {
     position: fixed;
-    top: auto;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     min-width: unset;
-    height: 85vh;
-    max-height: 85vh;
-    border-radius: $border-radius-lg $border-radius-lg 0 0;
-    border-bottom: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+// ── Search ───────────────────────────────────────────────────────────────────
+
+// ── Mobile close header ──────────────────────────────────────────────────────
+
+.panelMobileHeader {
+  display: none;
+
+  @media (max-width: $bp-md) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-sand;
+  }
+}
+
+.panelMobileTitle {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-navy;
+}
+
+.panelMobileClose {
+  display: flex;
+  background: none;
+  border: none;
+  color: $color-stone;
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $border-radius-sm;
+  transition: color 0.15s;
+  &:hover {
+    color: $color-navy;
   }
 }
 
@@ -317,6 +354,44 @@
   position: fixed;
   inset: 0;
   z-index: 9;
+}
+
+.countryDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 200px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-popover;
+  z-index: 10;
+  padding: $space-2 0;
+}
+
+.countryOption {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  cursor: pointer;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background: $color-offwhite;
+  }
+
+  input[type='checkbox'] {
+    accent-color: $color-blue;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
 }
 
 .industryDropdown {

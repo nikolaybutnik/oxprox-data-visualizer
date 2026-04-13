@@ -214,6 +214,17 @@ export default function InvestorSelector({
             role='dialog'
             aria-label='Investor selector'
           >
+            {/* Mobile close header */}
+            <div className={styles.panelMobileHeader}>
+              <span className={styles.panelMobileTitle}>Select Investors</span>
+              <button
+                className={styles.panelMobileClose}
+                onClick={() => setOpen(false)}
+                aria-label='Close'
+              >
+                <LuX size={18} />
+              </button>
+            </div>
             {/* Search */}
             <div className={styles.panelSearch}>
               <LuSearch size={14} className={styles.panelSearchIcon} />

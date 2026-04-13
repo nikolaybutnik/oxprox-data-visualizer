@@ -22,7 +22,8 @@ export default function CompanySelector({
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [isinSearch, setIsinSearch] = useState('')
-  const [countryFilter, setCountryFilter] = useState('')
+  const [countryFilter, setCountryFilter] = useState<string[]>([])
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false)
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([])
   const [industryDropdownOpen, setIndustryDropdownOpen] = useState(false)
   const [industrySearch, setIndustrySearch] = useState('')
@@ -62,13 +63,14 @@ export default function CompanySelector({
       search.length > 0 &&
       search.length < 3 &&
       !isinSearch &&
-      !countryFilter &&
+      countryFilter.length === 0 &&
       selectedIndustries.length === 0
     )
       return []
 
     return companies.filter((c) => {
-      if (countryFilter && c.country !== countryFilter) return false
+      if (countryFilter.length > 0 && !countryFilter.includes(c.country))
+        return false
       if (
         selectedIndustries.length > 0 &&
         !selectedIndustries.includes(c.industry)
@@ -115,9 +117,17 @@ export default function CompanySelector({
     onChange([])
     setSearch('')
     setIsinSearch('')
-    setCountryFilter('')
+    setCountryFilter([])
     setSelectedIndustries([])
   }, [onChange])
+
+  const toggleCountry = useCallback((country: string) => {
+    setCountryFilter((prev) =>
+      prev.includes(country)
+        ? prev.filter((c) => c !== country)
+        : [...prev, country],
+    )
+  }, [])
 
   const toggleIndustry = useCallback((industry: string) => {
     setSelectedIndustries((prev) =>
@@ -156,7 +166,7 @@ export default function CompanySelector({
     search.length > 0 &&
     search.length < 3 &&
     !isinSearch &&
-    !countryFilter &&
+    countryFilter.length === 0 &&
     selectedIndustries.length === 0
 
   return (
@@ -223,6 +233,17 @@ export default function CompanySelector({
             role='dialog'
             aria-label='Company selector'
           >
+            {/* Mobile close header */}
+            <div className={styles.panelMobileHeader}>
+              <span className={styles.panelMobileTitle}>Select Companies</span>
+              <button
+                className={styles.panelMobileClose}
+                onClick={() => setOpen(false)}
+                aria-label='Close'
+              >
+                <LuX size={18} />
+              </button>
+            </div>
             {/* Search */}
             <div className={styles.panelSearch}>
               <LuSearch size={14} className={styles.panelSearchIcon} />
@@ -262,19 +283,43 @@ export default function CompanySelector({
                 maxLength={32}
               />
 
-              {/* Country */}
-              <select
-                className={styles.preFilterSelect}
-                value={countryFilter}
-                onChange={(e) => setCountryFilter(e.target.value)}
-              >
-                <option value=''>Country</option>
-                {COMPANY_COUNTRIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              {/* Country multi-select */}
+              <div className={styles.preFilterField}>
+                <button
+                  className={styles.preFilterBtn}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setCountryDropdownOpen(!countryDropdownOpen)
+                  }}
+                >
+                  <span className={styles.preFilterBtnLabel}>
+                    {countryFilter.length === 0
+                      ? 'Country'
+                      : `${countryFilter.length} countr${countryFilter.length === 1 ? 'y' : 'ies'}`}
+                  </span>
+                  <LuChevronDown size={13} />
+                </button>
+                {countryDropdownOpen && (
+                  <>
+                    <div
+                      className={styles.industryBackdrop}
+                      onClick={() => setCountryDropdownOpen(false)}
+                    />
+                    <div className={styles.countryDropdown}>
+                      {COMPANY_COUNTRIES.map((c) => (
+                        <label key={c} className={styles.countryOption}>
+                          <input
+                            type='checkbox'
+                            checked={countryFilter.includes(c)}
+                            onChange={() => toggleCountry(c)}
+                          />
+                          <span>{c}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Industry grouped multi-select */}
               <div className={styles.preFilterField}>

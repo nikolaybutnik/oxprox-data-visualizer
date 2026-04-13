@@ -130,6 +130,19 @@ export default function DateSelector({
             role='dialog'
             aria-label='Date selector'
           >
+            {/* Mobile close header */}
+            <div className={styles.panelMobileHeader}>
+              <span className={styles.panelMobileTitle}>
+                Meeting Date Range
+              </span>
+              <button
+                className={styles.panelMobileClose}
+                onClick={() => setOpen(false)}
+                aria-label='Close'
+              >
+                <LuX size={18} />
+              </button>
+            </div>
             {/* Proxy periods */}
             <div className={styles.section}>
               <span className={styles.sectionLabel}>Proxy Period</span>
