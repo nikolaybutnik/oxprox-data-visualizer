@@ -43,6 +43,7 @@ import {
 } from '../data/votingRecords'
 import InvestorSelector from '../components/ui/InvestorSelector'
 import CompanySelector from '../components/ui/CompanySelector'
+import EsgFilter from '../components/ui/EsgFilter'
 import styles from './VotingRecords.module.scss'
 
 type ChipColor =
@@ -675,7 +676,7 @@ function VotingRecords() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [showAdditionalFilters, setShowAdditionalFilters] = useState(true)
-  const [esgFilter, setEsgFilter] = useState('')
+  const [esgFilter, setEsgFilter] = useState<string[]>([])
   const [antiEsgFilter, setAntiEsgFilter] = useState('')
   const [mgmtRecFilter, setMgmtRecFilter] = useState('')
   const [proponentFilter, setProponentFilter] = useState('')
@@ -686,7 +687,7 @@ function VotingRecords() {
     setCompanyFilter([])
     setDateFrom('')
     setDateTo('')
-    setEsgFilter('')
+    setEsgFilter([])
     setAntiEsgFilter('')
     setMgmtRecFilter('')
     setProponentFilter('')
@@ -853,17 +854,11 @@ function VotingRecords() {
 
             {showAdditionalFilters && (
               <div className={styles.additionalFilters}>
+                <div className={styles.sideFilterField}>
+                  <label>ESG Issues</label>
+                  <EsgFilter selected={esgFilter} onChange={setEsgFilter} />
+                </div>
                 {[
-                  {
-                    label: 'ESG Issues',
-                    value: esgFilter,
-                    setter: setEsgFilter,
-                    options: [
-                      'GHG Emissions',
-                      'Director Elections',
-                      'Employee Health & Safety',
-                    ],
-                  },
                   {
                     label: 'Anti-ESG',
                     value: antiEsgFilter,

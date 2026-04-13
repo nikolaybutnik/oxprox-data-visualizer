@@ -1,0 +1,183 @@
+@use '../../styles/tokens' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $space-2 $space-3;
+  padding-right: $space-8;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: $color-offwhite;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: $sand-hover;
+  }
+}
+
+.triggerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerArrow {
+  position: absolute;
+  right: $space-3;
+  display: flex;
+  color: $color-stone;
+  transition: transform 0.2s ease;
+}
+
+.triggerArrowOpen {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 240px;
+  max-height: 320px;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-popover;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-2 $space-3;
+  border-bottom: 1px solid $color-sand;
+}
+
+.searchIcon {
+  color: $color-stone;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  background: transparent;
+  &::placeholder {
+    color: $stone-60;
+  }
+}
+
+.clearBtn {
+  display: block;
+  width: 100%;
+  padding: $space-1 $space-3;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-stone;
+  background: none;
+  border: none;
+  border-bottom: 1px solid $color-sand;
+  cursor: pointer;
+  text-align: left;
+  &:hover {
+    color: $color-navy;
+    background: $color-offwhite;
+  }
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-1 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $stone-20;
+    border-radius: 2px;
+  }
+}
+
+.group {
+  & + & {
+    margin-top: 2px;
+  }
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  padding: $space-1 $space-3;
+  background: $color-offwhite;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.groupLabel {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: $color-blue;
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+}
+
+.groupName {
+  font-family: $font-body;
+  font-size: 10.5px;
+  font-weight: $font-weight-semibold;
+  color: $color-navy;
+}
+
+.issueOption {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 2px $space-3 2px $space-7;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  color: $color-navy;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  &:hover {
+    background: $color-offwhite;
+  }
+
+  input[type='checkbox'] {
+    accent-color: $color-blue;
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+}
