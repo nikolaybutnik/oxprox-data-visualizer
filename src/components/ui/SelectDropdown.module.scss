@@ -1,0 +1,104 @@
+@use '../../styles/tokens' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $space-2 $space-3;
+  padding-right: $space-8;
+  border: 1.5px solid $color-sand;
+  border-radius: $border-radius-md;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: $color-offwhite;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+
+  &:hover {
+    border-color: $sand-hover;
+  }
+}
+
+.triggerOpen {
+  border-color: $color-blue;
+  background: $color-white;
+  box-shadow: 0 0 0 3px $blue-10;
+}
+
+.triggerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerArrow {
+  position: absolute;
+  right: $space-3;
+  display: flex;
+  color: $color-stone;
+  transition: transform 0.2s ease;
+}
+
+.triggerArrowOpen {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: $color-white;
+  border: 1px solid $color-sand;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-popover;
+  z-index: 20;
+  padding: $space-1 0;
+  overflow: hidden;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $space-2 $space-3;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: $color-navy;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background: $color-offwhite;
+  }
+}
+
+.optionActive {
+  color: $color-blue;
+  font-weight: $font-weight-medium;
+  background: $blue-06;
+
+  &:hover {
+    background: $blue-08;
+  }
+}
+
+.optionLabel {
+  flex: 1;
+}
+
+.optionCheck {
+  color: $color-blue;
+  flex-shrink: 0;
+}

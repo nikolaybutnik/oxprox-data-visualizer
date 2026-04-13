@@ -45,6 +45,7 @@ import InvestorSelector from '../components/ui/InvestorSelector'
 import CompanySelector from '../components/ui/CompanySelector'
 import DateSelector from '../components/ui/DateSelector'
 import EsgFilter from '../components/ui/EsgFilter'
+import SelectDropdown from '../components/ui/SelectDropdown'
 import styles from './VotingRecords.module.scss'
 
 type ChipColor =
@@ -855,40 +856,46 @@ function VotingRecords() {
                     label: 'Anti-ESG',
                     value: antiEsgFilter,
                     setter: setAntiEsgFilter,
-                    options: ['Yes', 'No'],
+                    options: [
+                      { label: 'Yes', value: 'yes' },
+                      { label: 'No', value: 'no' },
+                    ],
                   },
                   {
                     label: 'Management Recommendation',
                     value: mgmtRecFilter,
                     setter: setMgmtRecFilter,
-                    options: ['For', 'Against'],
+                    options: [
+                      { label: 'For', value: 'for' },
+                      { label: 'Against', value: 'against' },
+                    ],
                   },
                   {
                     label: 'Proponent',
                     value: proponentFilter,
                     setter: setProponentFilter,
-                    options: ['Management', 'Shareholder'],
+                    options: [
+                      { label: 'Management', value: 'management' },
+                      { label: 'Shareholder', value: 'shareholder' },
+                    ],
                   },
                   {
                     label: 'Materiality',
                     value: materialityFilter,
                     setter: setMaterialityFilter,
-                    options: ['Yes', 'No'],
+                    options: [
+                      { label: 'Yes', value: 'yes' },
+                      { label: 'No', value: 'no' },
+                    ],
                   },
                 ].map((f) => (
                   <div key={f.label} className={styles.sideFilterField}>
                     <label>{f.label}</label>
-                    <select
+                    <SelectDropdown
                       value={f.value}
-                      onChange={(e) => f.setter(e.target.value)}
-                    >
-                      <option value=''>All</option>
-                      {f.options.map((o) => (
-                        <option key={o} value={o.toLowerCase()}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={f.setter}
+                      options={f.options}
+                    />
                   </div>
                 ))}
               </div>
