@@ -42,6 +42,7 @@ import {
   type ProponentType,
 } from '../data/votingRecords'
 import InvestorSelector from '../components/ui/InvestorSelector'
+import CompanySelector from '../components/ui/CompanySelector'
 import styles from './VotingRecords.module.scss'
 
 type ChipColor =
@@ -670,7 +671,7 @@ function VotingRecords() {
 
   // Filters
   const [selectedInvestors, setSelectedInvestors] = useState<string[]>([])
-  const [companyFilter, setCompanyFilter] = useState('')
+  const [companyFilter, setCompanyFilter] = useState<string[]>([])
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [showAdditionalFilters, setShowAdditionalFilters] = useState(true)
@@ -682,7 +683,7 @@ function VotingRecords() {
 
   const clearAllFilters = () => {
     setSelectedInvestors([])
-    setCompanyFilter('')
+    setCompanyFilter([])
     setDateFrom('')
     setDateTo('')
     setEsgFilter('')
@@ -741,18 +742,10 @@ function VotingRecords() {
           </div>
           <div className={styles.filterField}>
             <label className={styles.filterLabel}>Companies</label>
-            <div className={styles.inputWrap}>
-              <span className={styles.inputIcon}>
-                <LuSearch size={15} />
-              </span>
-              <input
-                type='text'
-                className={styles.filterInput}
-                placeholder='Search companies...'
-                value={companyFilter}
-                onChange={(e) => setCompanyFilter(e.target.value)}
-              />
-            </div>
+            <CompanySelector
+              selected={companyFilter}
+              onChange={setCompanyFilter}
+            />
           </div>
           <div className={styles.filterField}>
             <label className={styles.filterLabel}>Meeting Date Range</label>
