@@ -12,6 +12,7 @@ interface SelectDropdownProps {
   onChange: (value: string) => void
   options: Option[]
   placeholder?: string
+  compact?: boolean
 }
 
 export default function SelectDropdown({
@@ -19,6 +20,7 @@ export default function SelectDropdown({
   onChange,
   options,
   placeholder = 'All',
+  compact = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -43,7 +45,7 @@ export default function SelectDropdown({
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <button
-        className={`${styles.trigger} ${open ? styles.triggerOpen : ''}`}
+        className={`${styles.trigger} ${compact ? styles.triggerCompact : ''} ${open ? styles.triggerOpen : ''}`}
         onClick={() => setOpen(!open)}
         type='button'
       >
@@ -53,7 +55,7 @@ export default function SelectDropdown({
         <span
           className={`${styles.triggerArrow} ${open ? styles.triggerArrowOpen : ''}`}
         >
-          <LuChevronDown size={14} />
+          <LuChevronDown size={compact ? 12 : 14} />
         </span>
       </button>
 

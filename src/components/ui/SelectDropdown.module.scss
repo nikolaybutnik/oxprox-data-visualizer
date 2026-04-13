@@ -32,6 +32,14 @@
   box-shadow: 0 0 0 3px $blue-10;
 }
 
+.triggerCompact {
+  padding: $space-1 $space-2;
+  padding-right: $space-6;
+  font-size: $font-size-xs;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+}
+
 .triggerLabel {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -54,14 +62,20 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
+  min-width: 180px;
   background: $color-white;
   border: 1px solid $color-sand;
   border-radius: $border-radius-md;
   box-shadow: $shadow-popover;
-  z-index: 20;
+  z-index: 300;
   padding: $space-1 0;
   overflow: hidden;
+  white-space: nowrap;
+
+  @media (max-width: $bp-md) {
+    left: auto;
+    right: 0;
+  }
 }
 
 .option {

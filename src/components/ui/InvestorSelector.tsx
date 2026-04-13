@@ -8,6 +8,7 @@ import {
   type InvestorType,
   type InvestorNetwork,
 } from '../../data/investors'
+import SelectDropdown from './SelectDropdown'
 import styles from './InvestorSelector.module.scss'
 
 interface InvestorSelectorProps {
@@ -293,33 +294,25 @@ export default function InvestorSelector({
               </div>
 
               {/* Type select */}
-              <select
-                className={styles.preFilterSelect}
+              <SelectDropdown
                 value={typeFilter}
-                onChange={(e) =>
-                  setTypeFilter(e.target.value as InvestorType | '')
-                }
-              >
-                <option value=''>Type</option>
-                <option value='pension'>Asset Owner</option>
-                <option value='investment'>Asset Manager</option>
-              </select>
+                onChange={(v) => setTypeFilter(v as InvestorType | '')}
+                options={[
+                  { label: 'Asset Owner', value: 'pension' },
+                  { label: 'Asset Manager', value: 'investment' },
+                ]}
+                placeholder='Type'
+                compact
+              />
 
               {/* Network select */}
-              <select
-                className={styles.preFilterSelect}
+              <SelectDropdown
                 value={networkFilter}
-                onChange={(e) =>
-                  setNetworkFilter(e.target.value as InvestorNetwork | '')
-                }
-              >
-                <option value=''>Network</option>
-                {INVESTOR_NETWORKS.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
+                onChange={(v) => setNetworkFilter(v as InvestorNetwork | '')}
+                options={INVESTOR_NETWORKS.map((n) => ({ label: n, value: n }))}
+                placeholder='Network'
+                compact
+              />
             </div>
 
             {/* Virtualized results list */}
